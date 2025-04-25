@@ -3,6 +3,7 @@ package Backend.controller;
 import Backend.model.Post;
 import Backend.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,49 +14,60 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/posts")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:5173")
 public class PostController {
 
     @Autowired
     private PostRepository postRepository;
 
-    private final String uploadDir = "uploads/";
+    private final String uploadDir = "G:/PAFPROJECT/Backend/uploads";
 
     @PostMapping("/create")
-    public Post createPost(
+    public ResponseEntity<?> createPost(
             @RequestParam("email") String email,
             @RequestParam("description") String description,
             @RequestParam("images") MultipartFile[] images
-    ) throws IOException {
-
-        File folder = new File(uploadDir);
-        if (!folder.exists()) folder.mkdirs(); // Ensure upload folder exists
-
-        List<String> imageUrls = new ArrayList<>();
-
-        for (MultipartFile file : images) {
-            if (!file.isEmpty()) {
-                String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-                File destination = new File(uploadDir + fileName);
-                file.transferTo(destination);
-                imageUrls.add("http://localhost:8080/uploads/" + fileName);
-                System.out.println("Saved file to: " + destination.getAbsolutePath());
+    ) {
+        try {
+            File folder = new File(uploadDir);
+            if (!folder.exists()) folder.mkdirs();
+    
+            List<String> imageUrls = new ArrayList<>();
+    
+            for (MultipartFile file : images) {
+                if (!file.isEmpty()) {
+                    String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                    File destination = new File(uploadDir + fileName);
+                    file.transferTo(destination);
+                    imageUrls.add("http://localhost:8080/uploads/" + fileName);
+                    System.out.println("Saved file to: " + destination.getAbsolutePath());
+                } else {
+                    return ResponseEntity.badRequest().body("One or more images are empty");
+                }
             }
+    
+            Post post = Post.builder()
+                    .email(email)
+                    .description(description)
+                    .imageUrls(imageUrls)
+                    .likes(0)
+                    .comments(new ArrayList<>())
+                    .build();
+    
+            Post savedPost = postRepository.save(post);
+            System.out.println("Saved post: " + savedPost);
+            return ResponseEntity.ok(savedPost);
+    
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Post creation failed: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace(); // Log any other error
+            return ResponseEntity.status(500).body("Post creation failed: " + e.getMessage());
         }
-
-        Post post = Post.builder()
-                .email(email)
-                .description(description)
-                .imageUrls(imageUrls)
-                .likes(0)
-                .comments(new ArrayList<>())
-                .build();
-
-        Post savedPost = postRepository.save(post);
-        System.out.println("Saved post with ID: " + savedPost.getId());
-
-        return savedPost;
     }
+    
+
 
     @GetMapping("/user")
     public List<Post> getUserPosts(@RequestParam String email) {
