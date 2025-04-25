@@ -13,71 +13,71 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/posts")
-@CrossOrigin(origins = "*") // Allow cross-origin requests (adjust according to your needs)
+@CrossOrigin(origins = "http://localhost:3000")
 public class PostController {
 
     @Autowired
     private PostRepository postRepository;
 
-    private final String uploadDir = "uploads/";  // Directory to store uploaded images
+    private final String uploadDir = "uploads/";
 
-    // Endpoint to create a new post
     @PostMapping("/create")
-public Post createPost(
-        @RequestParam("email") String email,
-        @RequestParam("description") String description,
-        @RequestParam("images") MultipartFile[] images
-) throws IOException {
-    List<String> imageUrls = new ArrayList<>();
+    public Post createPost(
+            @RequestParam("email") String email,
+            @RequestParam("description") String description,
+            @RequestParam("images") MultipartFile[] images
+    ) throws IOException {
 
-    for (MultipartFile file : images) {
-        if (!file.isEmpty()) {
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            File destination = new File(uploadDir + fileName);
-            destination.getParentFile().mkdirs();
-            file.transferTo(destination);
-            imageUrls.add("http://localhost:8080/uploads/" + fileName);
+        File folder = new File(uploadDir);
+        if (!folder.exists()) folder.mkdirs(); // Ensure upload folder exists
+
+        List<String> imageUrls = new ArrayList<>();
+
+        for (MultipartFile file : images) {
+            if (!file.isEmpty()) {
+                String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                File destination = new File(uploadDir + fileName);
+                file.transferTo(destination);
+                imageUrls.add("http://localhost:8080/uploads/" + fileName);
+                System.out.println("Saved file to: " + destination.getAbsolutePath());
+            }
         }
+
+        Post post = Post.builder()
+                .email(email)
+                .description(description)
+                .imageUrls(imageUrls)
+                .likes(0)
+                .comments(new ArrayList<>())
+                .build();
+
+        Post savedPost = postRepository.save(post);
+        System.out.println("Saved post with ID: " + savedPost.getId());
+
+        return savedPost;
     }
 
-    Post post = Post.builder()
-            .email(email)
-            .description(description)
-            .imageUrls(imageUrls)
-            .likes(0)
-            .comments(new ArrayList<>())
-            .build();
-
-    return postRepository.save(post);
-}
-
-
-    // Endpoint to get all posts by a user
     @GetMapping("/user")
     public List<Post> getUserPosts(@RequestParam String email) {
-        return postRepository.findByEmail(email); // Fetch posts by email
+        return postRepository.findByEmail(email);
     }
 
-    // Endpoint to get all posts
     @GetMapping("/all")
     public List<Post> getAllPosts() {
-        return postRepository.findAll(); // Fetch all posts from the database
+        return postRepository.findAll();
     }
 
-   // Endpoint to like a post
-@PostMapping("/like/{id}")
-public Post likePost(@PathVariable String id) {  // Change Long to String here
-    Post post = postRepository.findById(id).orElseThrow();
-    post.setLikes(post.getLikes() + 1); // Increment the like count
-    return postRepository.save(post); // Save the updated post
-}
+    @PostMapping("/like/{id}")
+    public Post likePost(@PathVariable String id) {
+        Post post = postRepository.findById(id).orElseThrow();
+        post.setLikes(post.getLikes() + 1);
+        return postRepository.save(post);
+    }
 
-// Endpoint to add a comment to a post
-@PostMapping("/comment/{id}")
-public Post addComment(@PathVariable String id, @RequestBody String comment) {  // Change Long to String here
-    Post post = postRepository.findById(id).orElseThrow();
-    post.getComments().add(comment); // Add the new comment to the post
-    return postRepository.save(post); // Save the updated post
-}
-
+    @PostMapping("/comment/{id}")
+    public Post addComment(@PathVariable String id, @RequestBody String comment) {
+        Post post = postRepository.findById(id).orElseThrow();
+        post.getComments().add(comment);
+        return postRepository.save(post);
+    }
 }
