@@ -15,29 +15,35 @@ export default function Post_add() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
     const formData = new FormData();
     formData.append("email", email);
     formData.append("description", description);
-    images.forEach((img, index) => {
-        formData.append("images", img);
-        console.log("Appending image:", img.name);
+    images.forEach((img) => {
+      formData.append("images", img);
     });
-    
-    
-
+  
     try {
       const res = await axios.post("http://localhost:8080/api/posts/create", formData, {
         headers: {
           "Content-Type": "multipart/form-data"
         }
       });
+      console.log("Response from backend:", res.data);
       alert("Post created!");
+  
+      // Optional reset
+      setDescription("");
+      setImages([]);
+      setPreview([]);
+  
     } catch (error) {
-      console.error(error);
+      console.error("Post creation failed:", error);
       alert("Post creation failed.");
     }
   };
+  
+
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-xl mt-10">
