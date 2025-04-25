@@ -20,4 +20,5 @@ public class Post {
     private List<String> imageUrls;
     private int likes;
     private List<String> comments;
+    
 }
