@@ -42,7 +42,18 @@ export default function Userprofile() {
               <p><strong>Posts:</strong> 35</p>
             </div>
           </div>
+          
         </div>
+
+        <div className="flex justify-center mt-6">
+  <button
+    onClick={() => navigate("/Post_add")}
+    className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition"
+  >
+    ➕ Add New Post
+  </button>
+</div>
+        
 
         {/* Posts section */}
         <div className="p-6 border-t mt-4">

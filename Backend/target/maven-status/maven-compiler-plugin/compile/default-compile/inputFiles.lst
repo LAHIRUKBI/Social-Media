@@ -1,4 +1,8 @@
 G:\PAFPROJECT\Backend\src\main\java\Backend\BackendApplication.java
+G:\PAFPROJECT\Backend\src\main\java\Backend\config\WebConfig.java
+G:\PAFPROJECT\Backend\src\main\java\Backend\controller\PostController.java
 G:\PAFPROJECT\Backend\src\main\java\Backend\controller\UserController.java
+G:\PAFPROJECT\Backend\src\main\java\Backend\model\Post.java
 G:\PAFPROJECT\Backend\src\main\java\Backend\model\User.java
+G:\PAFPROJECT\Backend\src\main\java\Backend\repository\PostRepository.java
 G:\PAFPROJECT\Backend\src\main\java\Backend\repository\UserRepository.java
