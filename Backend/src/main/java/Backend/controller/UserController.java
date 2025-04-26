@@ -2,9 +2,11 @@ package Backend.controller;
 
 import Backend.model.User;
 import Backend.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "http://localhost:5173") // Adjust port if different
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -20,6 +22,7 @@ public class UserController {
         return "User registered successfully!";
     }
 
+    // Add login endpoint
     @PostMapping("/login")
     public String loginUser(@RequestBody User user) {
         User existingUser = userRepository.findByEmail(user.getEmail());
@@ -31,15 +34,5 @@ public class UserController {
         }
         return "Login successful!";
     }
-
-    @PostMapping("/updateProfileImage")
-    public String updateProfileImage(@RequestParam String email, @RequestParam String profileImage) {
-        User user = userRepository.findByEmail(email);
-        if (user != null) {
-            user.setProfileImage(profileImage);
-            userRepository.save(user);
-            return "Profile image updated successfully!";
-        }
-        return "User not found!";
-    }
+    
 }

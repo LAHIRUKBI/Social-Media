@@ -1,47 +1,51 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function Userprofile() {
   const navigate = useNavigate();
   const email = localStorage.getItem("userEmail");
   const name = email ? email.split("@")[0] : "User";
-
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImage, setProfileImage] = useState("https://i.pravatar.cc/150?img=3");
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
-    // You can fetch the profile image from the backend if it's already saved
-    // Example: fetchProfileImage();
-  }, []);
+    if (email) {
+      axios.get(`http://localhost:8080/api/users/${email}`)
+        .then(res => {
+          if (res.data.profileImage) {
+            setProfileImage(`http://localhost:8080/${res.data.profileImage}`);
+          }
+        })
+        .catch(err => console.error("Error fetching user:", err));
+    }
+  }, [email]);
 
   const handleLogout = () => {
-    localStorage.clear(); // Remove all stored data
-    navigate("/Login"); // Navigate to login page
+    localStorage.clear();
+    navigate("/Login");
   };
 
-  const handleImageChange = (e) => {
+  const handleImageClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file); // Preview the image locally
-      setProfileImage(imageUrl); // Set image preview (you can send this to the backend)
-      
-      // Create a FormData object to send the file to the backend
       const formData = new FormData();
-      formData.append("email", email);
-      formData.append("profileImage", imageUrl);
+      formData.append("image", file);
 
-      // Send the image to the backend (make sure to implement this endpoint)
-      fetch("http://localhost:8080/api/users/updateProfileImage", {
-        method: "POST",
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          // Handle successful image update (e.g., show a success message)
-          console.log("Profile image updated:", data);
-        })
-        .catch((error) => {
-          console.error("Error updating profile image:", error);
+      try {
+        const res = await axios.put(`http://localhost:8080/api/users/upload/${email}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" }
         });
+        if (res.data.profileImage) {
+          setProfileImage(`http://localhost:8080/${res.data.profileImage}`);
+        }
+      } catch (err) {
+        console.error("Error uploading image:", err);
+      }
     }
   };
 
@@ -62,11 +66,21 @@ export default function Userprofile() {
 
         {/* Profile Info */}
         <div className="p-6 flex flex-col md:flex-row items-center md:items-start">
-          <img
-            src={profileImage || "https://i.pravatar.cc/150?img=3"} // Default image if no profile image
-            alt="Profile"
-            className="w-32 h-32 rounded-full border-4 border-white -mt-16 shadow-lg"
-          />
+          <div className="relative">
+            <img
+              src={profileImage}
+              alt="Profile"
+              className="w-32 h-32 rounded-full border-4 border-white -mt-16 shadow-lg cursor-pointer object-cover"
+              onClick={handleImageClick}
+            />
+            <input
+              type="file"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+          </div>
           <div className="ml-0 md:ml-6 mt-4 md:mt-0 text-center md:text-left">
             <h2 className="text-3xl font-bold text-gray-800">{name}</h2>
             <p className="text-gray-500">Food Enthusiast | Home Cook</p>
@@ -78,17 +92,7 @@ export default function Userprofile() {
           </div>
         </div>
 
-        {/* Profile Image Upload */}
-        <div className="p-6">
-          <label className="block text-gray-700">Upload Profile Image:</label>
-          <input 
-            type="file" 
-            onChange={handleImageChange} 
-            className="mt-2 text-sm text-gray-500"
-          />
-        </div>
-
-        {/* Add and View Post Buttons */}
+        {/* Buttons */}
         <div className="flex justify-center mt-6 space-x-4">
           <button
             onClick={() => navigate("/Post_add")}
@@ -96,7 +100,6 @@ export default function Userprofile() {
           >
             ➕ Add New Post
           </button>
-
           <button
             onClick={() => navigate("/Post_views")}
             className="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition"
@@ -105,7 +108,7 @@ export default function Userprofile() {
           </button>
         </div>
 
-        {/* Posts section */}
+        {/* Posts Section */}
         <div className="p-6 border-t mt-4">
           <h3 className="text-xl font-semibold text-gray-700 mb-4">Recent Posts</h3>
           <div className="grid md:grid-cols-2 gap-4">
