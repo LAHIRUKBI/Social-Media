@@ -5,13 +5,21 @@ import Backend.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-@CrossOrigin(origins = "http://localhost:5173") // Adjust port if different
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
+
     @Autowired
     private UserRepository userRepository;
+
+    private static final String UPLOAD_DIR = "G:/PAFPROJECT/Backend/uploads/";
 
     @PostMapping("/register")
     public String registerUser(@RequestBody User user) {
@@ -22,7 +30,6 @@ public class UserController {
         return "User registered successfully!";
     }
 
-    // Add login endpoint
     @PostMapping("/login")
     public String loginUser(@RequestBody User user) {
         User existingUser = userRepository.findByEmail(user.getEmail());
@@ -34,5 +41,30 @@ public class UserController {
         }
         return "Login successful!";
     }
-    
+
+    @GetMapping("/{email}")
+    public User getUserByEmail(@PathVariable String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @PutMapping("/upload/{email}")
+public User uploadProfileImage(@PathVariable String email, @RequestParam("image") MultipartFile image) throws IOException {
+    User user = userRepository.findByEmail(email);
+    if (user == null) {
+        throw new RuntimeException("User not found!");
+    }
+
+    // Save image to uploads folder
+    String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
+    File dest = new File(UPLOAD_DIR + fileName);
+    image.transferTo(dest);
+
+    // Save ONLY the filename
+    user.setProfileImage(fileName);
+
+    return userRepository.save(user);
+}
+
+
+
 }
