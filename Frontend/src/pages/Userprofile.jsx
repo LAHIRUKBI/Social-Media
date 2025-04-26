@@ -20,6 +20,7 @@ export default function Userprofile() {
         .catch(err => console.error("Error fetching user:", err));
     }
   }, [email]);
+  
 
   const handleLogout = () => {
     localStorage.clear();
@@ -41,7 +42,8 @@ export default function Userprofile() {
           headers: { "Content-Type": "multipart/form-data" }
         });
         if (res.data.profileImage) {
-          setProfileImage(`http://localhost:8080/${res.data.profileImage}`);
+          setProfileImage(`http://localhost:8080/api/users/images/${res.data.profileImage}`);
+
         }
       } catch (err) {
         console.error("Error uploading image:", err);
