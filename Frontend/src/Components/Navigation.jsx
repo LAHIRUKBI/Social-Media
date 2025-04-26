@@ -19,7 +19,7 @@ export default function Navigation() {
         <div className="space-x-6 text-gray-700 font-medium">
           <Link to="/Home" className="hover:text-red-500 transition">Home</Link>
           <Link to="/notifications" className="hover:text-red-500 transition">Notification</Link>
-          <Link to="/learning-plans" className="hover:text-red-500 transition">Learning Plans</Link>
+          <Link to="/Learning_Home" className="hover:text-red-500 transition">Learning Plans</Link>
           {username ? (
             <Link to="/Userprofile" className="hover:text-red-500 transition">{username}</Link>
           ) : (
