@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Userprofile() {
@@ -6,9 +6,43 @@ export default function Userprofile() {
   const email = localStorage.getItem("userEmail");
   const name = email ? email.split("@")[0] : "User";
 
+  const [profileImage, setProfileImage] = useState(null);
+
+  useEffect(() => {
+    // You can fetch the profile image from the backend if it's already saved
+    // Example: fetchProfileImage();
+  }, []);
+
   const handleLogout = () => {
     localStorage.clear(); // Remove all stored data
     navigate("/Login"); // Navigate to login page
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file); // Preview the image locally
+      setProfileImage(imageUrl); // Set image preview (you can send this to the backend)
+      
+      // Create a FormData object to send the file to the backend
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("profileImage", imageUrl);
+
+      // Send the image to the backend (make sure to implement this endpoint)
+      fetch("http://localhost:8080/api/users/updateProfileImage", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // Handle successful image update (e.g., show a success message)
+          console.log("Profile image updated:", data);
+        })
+        .catch((error) => {
+          console.error("Error updating profile image:", error);
+        });
+    }
   };
 
   return (
@@ -29,7 +63,7 @@ export default function Userprofile() {
         {/* Profile Info */}
         <div className="p-6 flex flex-col md:flex-row items-center md:items-start">
           <img
-            src="https://i.pravatar.cc/150?img=3"
+            src={profileImage || "https://i.pravatar.cc/150?img=3"} // Default image if no profile image
             alt="Profile"
             className="w-32 h-32 rounded-full border-4 border-white -mt-16 shadow-lg"
           />
@@ -42,6 +76,16 @@ export default function Userprofile() {
               <p><strong>Posts:</strong> 35</p>
             </div>
           </div>
+        </div>
+
+        {/* Profile Image Upload */}
+        <div className="p-6">
+          <label className="block text-gray-700">Upload Profile Image:</label>
+          <input 
+            type="file" 
+            onChange={handleImageChange} 
+            className="mt-2 text-sm text-gray-500"
+          />
         </div>
 
         {/* Add and View Post Buttons */}
