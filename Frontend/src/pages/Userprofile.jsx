@@ -7,7 +7,9 @@ export default function Userprofile() {
   const email = localStorage.getItem("userEmail");
   const name = email ? email.split("@")[0] : "User";
   const [profileImage, setProfileImage] = useState("https://i.pravatar.cc/150?img=3");
-  const fileInputRef = useRef(null);
+  const [coverImage, setCoverImage] = useState("https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e");
+  const profileImageInputRef = useRef(null);
+  const coverImageInputRef = useRef(null);
 
   useEffect(() => {
     if (email) {
@@ -26,11 +28,15 @@ export default function Userprofile() {
     navigate("/Login");
   };
 
-  const handleImageClick = () => {
-    fileInputRef.current.click();
+  const handleProfileImageClick = () => {
+    profileImageInputRef.current.click();
   };
 
-  const handleFileChange = async (e) => {
+  const handleCoverImageClick = () => {
+    coverImageInputRef.current.click();
+  };
+
+  const handleProfileImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       const formData = new FormData();
@@ -44,10 +50,30 @@ export default function Userprofile() {
           setProfileImage(`http://localhost:8080/api/users/images/${res.data.profileImage}`);
         }
       } catch (err) {
-        console.error("Error uploading image:", err);
+        console.error("Error uploading profile image:", err);
       }
     }
   };
+
+  const handleCoverImageChange = async (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const res = await axios.put(`http://localhost:8080/api/users/uploadCover/${email}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+      if (res.data.coverImage) {
+        // Set the new cover image URL
+        setCoverImage(res.data.coverImage);
+      }
+    } catch (err) {
+      console.error("Error uploading cover image:", err);
+    }
+  }
+};  
 
   return (
     <div className="bg-gray-100 min-h-screen py-8 px-4">
@@ -62,7 +88,15 @@ export default function Userprofile() {
         </button>
 
         {/* Cover Photo */}
-        <div className="h-64 bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e')" }}></div>
+        <div className="h-64 bg-cover bg-center cursor-pointer" style={{ backgroundImage: `url(${coverImage})` }} onClick={handleCoverImageClick}>
+          <input
+            type="file"
+            ref={coverImageInputRef}
+            style={{ display: "none" }}
+            accept="image/*"
+            onChange={handleCoverImageChange}
+          />
+        </div>
 
         {/* Profile Info */}
         <div className="flex flex-col md:flex-row items-center md:items-start px-8 py-6">
@@ -71,14 +105,14 @@ export default function Userprofile() {
               src={profileImage}
               alt="Profile"
               className="w-36 h-36 rounded-full border-4 border-white -mt-20 shadow-xl object-cover cursor-pointer"
-              onClick={handleImageClick}
+              onClick={handleProfileImageClick}
             />
             <input
               type="file"
-              ref={fileInputRef}
+              ref={profileImageInputRef}
               style={{ display: "none" }}
               accept="image/*"
-              onChange={handleFileChange}
+              onChange={handleProfileImageChange}
             />
           </div>
           <div className="mt-6 md:mt-0 md:ml-8 text-center md:text-left">
