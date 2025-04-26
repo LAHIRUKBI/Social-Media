@@ -20,7 +20,6 @@ export default function Userprofile() {
         .catch(err => console.error("Error fetching user:", err));
     }
   }, [email]);
-  
 
   const handleLogout = () => {
     localStorage.clear();
@@ -43,7 +42,6 @@ export default function Userprofile() {
         });
         if (res.data.profileImage) {
           setProfileImage(`http://localhost:8080/api/users/images/${res.data.profileImage}`);
-
         }
       } catch (err) {
         console.error("Error uploading image:", err);
@@ -52,27 +50,27 @@ export default function Userprofile() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen p-4">
-      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden relative">
+    <div className="bg-gray-100 min-h-screen py-8 px-4">
+      <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden relative">
 
         {/* Logout Button */}
         <button
           onClick={handleLogout}
-          className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+          className="absolute top-6 right-6 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold px-5 py-2 rounded-full shadow-md transition-all"
         >
           Logout
         </button>
 
         {/* Cover Photo */}
-        <div className="h-56 bg-cover bg-center bg-[url('https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e')]"></div>
+        <div className="h-64 bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e')" }}></div>
 
         {/* Profile Info */}
-        <div className="p-6 flex flex-col md:flex-row items-center md:items-start">
+        <div className="flex flex-col md:flex-row items-center md:items-start px-8 py-6">
           <div className="relative">
             <img
               src={profileImage}
               alt="Profile"
-              className="w-32 h-32 rounded-full border-4 border-white -mt-16 shadow-lg cursor-pointer object-cover"
+              className="w-36 h-36 rounded-full border-4 border-white -mt-20 shadow-xl object-cover cursor-pointer"
               onClick={handleImageClick}
             />
             <input
@@ -83,44 +81,44 @@ export default function Userprofile() {
               onChange={handleFileChange}
             />
           </div>
-          <div className="ml-0 md:ml-6 mt-4 md:mt-0 text-center md:text-left">
-            <h2 className="text-3xl font-bold text-gray-800">{name}</h2>
-            <p className="text-gray-500">Food Enthusiast | Home Cook</p>
-            <div className="mt-4 flex flex-col gap-2">
-              <p><strong>Email:</strong> {email}</p>
-              <p><strong>Followers:</strong> 120</p>
-              <p><strong>Posts:</strong> 35</p>
+          <div className="mt-6 md:mt-0 md:ml-8 text-center md:text-left">
+            <h2 className="text-4xl font-bold text-gray-800">{name}</h2>
+            <p className="text-gray-500 mt-1">Food Enthusiast | Home Cook</p>
+            <div className="mt-4 space-y-2 text-sm text-gray-600">
+              <p><span className="font-semibold">Email:</span> {email}</p>
+              <p><span className="font-semibold">Followers:</span> 120</p>
+              <p><span className="font-semibold">Posts:</span> 35</p>
             </div>
           </div>
         </div>
 
         {/* Buttons */}
-        <div className="flex justify-center mt-6 space-x-4">
+        <div className="flex justify-center gap-6 mt-8 mb-6">
           <button
             onClick={() => navigate("/Post_add")}
-            className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition"
+            className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold text-sm px-6 py-3 rounded-full transition-all shadow-md"
           >
             ➕ Add New Post
           </button>
           <button
             onClick={() => navigate("/Post_views")}
-            className="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition"
+            className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold text-sm px-6 py-3 rounded-full transition-all shadow-md"
           >
             👀 View Posts
           </button>
         </div>
 
         {/* Posts Section */}
-        <div className="p-6 border-t mt-4">
-          <h3 className="text-xl font-semibold text-gray-700 mb-4">Recent Posts</h3>
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="bg-gray-50 p-4 rounded-lg shadow-md">
-              <h4 className="font-bold text-gray-800 mb-1">My Spaghetti Recipe 🍝</h4>
-              <p className="text-sm text-gray-600">Just tried out this new recipe and it turned out amazing!</p>
+        <div className="px-8 pb-8">
+          <h3 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Recent Posts</h3>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="bg-gray-50 p-6 rounded-xl shadow hover:shadow-md transition">
+              <h4 className="font-bold text-lg text-gray-800 mb-2">My Spaghetti Recipe 🍝</h4>
+              <p className="text-gray-600 text-sm">Just tried out this new recipe and it turned out amazing!</p>
             </div>
-            <div className="bg-gray-50 p-4 rounded-lg shadow-md">
-              <h4 className="font-bold text-gray-800 mb-1">Grill Night 🔥</h4>
-              <p className="text-sm text-gray-600">Had a great time grilling with the fam!</p>
+            <div className="bg-gray-50 p-6 rounded-xl shadow hover:shadow-md transition">
+              <h4 className="font-bold text-lg text-gray-800 mb-2">Grill Night 🔥</h4>
+              <p className="text-gray-600 text-sm">Had a great time grilling with the fam!</p>
             </div>
           </div>
         </div>
