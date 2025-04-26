@@ -65,4 +65,15 @@ public ResponseEntity<?> getRecipesByUser(@RequestParam String email) {
     }
 }
 
+
+@GetMapping("/all")
+public ResponseEntity<?> getAllRecipes() {
+    try {
+        return ResponseEntity.ok(recipeRepository.findAll());
+    } catch (Exception e) {
+        return ResponseEntity.status(500).body("Error fetching all recipes!");
+    }
+}
+
+
 }

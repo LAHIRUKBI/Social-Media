@@ -8,6 +8,7 @@ export default function Home() {
   const name = email ? email.split("@")[0] : "Chef";
 
   const [posts, setPosts] = useState([]);
+  const [allRecipes, setAllRecipes] = useState([]);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -18,12 +19,55 @@ export default function Home() {
         console.error("Error fetching posts:", error);
       }
     };
+
+    const fetchAllRecipes = async () => {
+      try {
+        const res = await axios.get('http://localhost:8080/api/recipes/all'); // <-- Fetch all recipes
+        setAllRecipes(res.data.reverse()); // newest first
+      } catch (error) {
+        console.error('Error fetching all recipes:', error);
+      }
+    };
+
     fetchPosts();
-  }, []);
+    fetchAllRecipes();
+  }, [email]);
 
   const handleLogout = () => {
     localStorage.clear();
     navigate('/Login');
+  };
+
+  const handleLikePost = (postId) => {
+    setPosts(prevPosts =>
+      prevPosts.map(post =>
+        post.id === postId ? { ...post, likes: post.likes + 1 } : post
+      )
+    );
+  };
+
+  const handleCommentPost = (postId, comment) => {
+    setPosts(prevPosts =>
+      prevPosts.map(post =>
+        post.id === postId ? { ...post, comments: [...post.comments, comment] } : post
+      )
+    );
+  };
+
+  const handleLikeRecipe = (recipeId) => {
+    setAllRecipes(prevRecipes =>
+      prevRecipes.map(recipe =>
+        recipe._id === recipeId ? { ...recipe, likes: (recipe.likes || 0) + 1 } : recipe
+      )
+    );
+  };
+
+  const handleCommentRecipe = (recipeId, comment) => {
+    setAllRecipes(prevRecipes =>
+      prevRecipes.map(recipe =>
+        recipe._id === recipeId ? { ...recipe, comments: [...(recipe.comments || []), comment] } : recipe
+      )
+    );
   };
 
   return (
@@ -50,12 +94,12 @@ export default function Home() {
         </p>
       </section>
 
-      {/* Feed */}
-      <section className="max-w-4xl mx-auto px-4">
-        <h3 className="text-xl font-semibold mb-4 text-gray-700">🔥 Trending Recipes</h3>
+      {/* Trending Posts */}
+      <section className="max-w-5xl mx-auto px-4 mb-10">
+        <h3 className="text-xl font-semibold mb-4 text-gray-700">🔥 Trending Posts</h3>
 
-        {posts.length === 0 ? (
-          <p className="text-gray-500">No posts available yet. Be the first to post!</p>
+        {posts.length === 0 && allRecipes.length === 0 ? (
+          <p className="text-gray-500">No recipes or posts available yet. Be the first to post!</p>
         ) : (
           <div className="grid sm:grid-cols-2 gap-6">
             {posts.map((post) => (
@@ -69,12 +113,72 @@ export default function Home() {
                 )}
                 <h4 className="text-lg font-semibold text-gray-800">{post.email.split('@')[0]}'s Post</h4>
                 <p className="text-sm text-gray-600 mb-2">{post.description}</p>
-                <p className="text-xs text-gray-400">❤️ {post.likes} Likes • 💬 {post.comments.length} Comments</p>
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span>❤️ {post.likes} Likes • 💬 {post.comments.length} Comments</span>
+                </div>
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={() => handleLikePost(post.id)}
+                    className="text-orange-500 hover:underline"
+                  >
+                    Like
+                  </button>
+                  <button
+                    onClick={() => handleCommentPost(post.id, "Nice recipe!")}
+                    className="text-blue-500 hover:underline"
+                  >
+                    Comment
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         )}
       </section>
+
+      {/* All Recipes */}
+      <section className="max-w-4xl mx-auto px-4 mb-10">
+        <h3 className="text-xl font-semibold mb-4 text-gray-700">🌍 All Recipes</h3>
+
+        {allRecipes.length === 0 ? (
+          <p className="text-center text-gray-600">No recipes available yet.</p>
+        ) : (
+          <div className="grid sm:grid-cols-2 gap-6">
+            {allRecipes.map((recipe) => (
+              <div key={recipe._id} className="bg-white rounded-lg shadow-md p-4">
+                {recipe.imageUrl && (
+                  <img
+                    src={`http://localhost:8080${recipe.imageUrl}`}
+                    alt={recipe.title}
+                    className="rounded-md mb-3 h-40 w-full object-cover"
+                  />
+                )}
+                <h4 className="text-lg font-semibold text-gray-800">{recipe.title}</h4>
+                <p className="text-sm text-gray-600 mb-2">{recipe.ingredients}</p>
+                <p className="text-sm text-gray-500 mb-2">{recipe.instructions}</p> {/* Display instructions */}
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span>❤️ {recipe.likes || 0} Likes • 💬 {(recipe.comments || []).length} Comments</span>
+                </div>
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={() => handleLikeRecipe(recipe._id)}
+                    className="text-orange-500 hover:underline"
+                  >
+                    Like
+                  </button>
+                  <button
+                    onClick={() => handleCommentRecipe(recipe._id, "Looks delicious!")}
+                    className="text-blue-500 hover:underline"
+                  >
+                    Comment
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
     </div>
   );
 }
