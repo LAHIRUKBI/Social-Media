@@ -42,18 +42,24 @@ export default function Userprofile() {
               <p><strong>Posts:</strong> 35</p>
             </div>
           </div>
-          
         </div>
 
-        <div className="flex justify-center mt-6">
-  <button
-    onClick={() => navigate("/Post_add")}
-    className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition"
-  >
-    ➕ Add New Post
-  </button>
-</div>
-        
+        {/* Add and View Post Buttons */}
+        <div className="flex justify-center mt-6 space-x-4">
+          <button
+            onClick={() => navigate("/Post_add")}
+            className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition"
+          >
+            ➕ Add New Post
+          </button>
+
+          <button
+            onClick={() => navigate("/Post_views")}
+            className="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition"
+          >
+            👀 View Posts
+          </button>
+        </div>
 
         {/* Posts section */}
         <div className="p-6 border-t mt-4">
