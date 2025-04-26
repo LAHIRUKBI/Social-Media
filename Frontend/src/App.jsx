@@ -7,6 +7,7 @@ import Userprofile from './pages/Userprofile';
 import Home from './pages/Home';
 import Post_add from './pages/Post_add';
 import Post_views from './pages/Post_views';
+import Learning_Home from './pages/Learning_Home';
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="/Home" element={<Home />} />
         <Route path="/Post_add" element={<Post_add />} />
         <Route path="/Post_views" element={<Post_views />} />
+        <Route path="/Learning_Home" element={<Learning_Home />} />
       </Routes>
     </BrowserRouter>
   )
