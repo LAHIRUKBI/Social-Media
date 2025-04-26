@@ -54,4 +54,15 @@ public class RecipeController {
     
         return ResponseEntity.ok("Recipe added successfully!");
     }
+
+
+    @GetMapping("/user")
+public ResponseEntity<?> getRecipesByUser(@RequestParam String email) {
+    try {
+        return ResponseEntity.ok(recipeRepository.findByEmail(email));
+    } catch (Exception e) {
+        return ResponseEntity.status(500).body("Error fetching user's recipes!");
+    }
+}
+
 }
