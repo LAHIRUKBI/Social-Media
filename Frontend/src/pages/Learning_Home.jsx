@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaBookOpen, FaUtensils, FaPlusCircle } from 'react-icons/fa';
+import { FaBookOpen, FaUtensils, FaPlusCircle, FaEye } from 'react-icons/fa';
 import { Link } from 'react-router-dom'; // 👈 Import Link
 
 export default function Learning_Home() {
@@ -32,6 +32,17 @@ export default function Learning_Home() {
               <h2 className="text-2xl font-semibold text-orange-600 mb-2">Share Your Recipes</h2>
               <p className="text-gray-600">
                 Post your own cooking creations, tips, and tricks to inspire the community!
+              </p>
+            </div>
+          </Link>
+
+          {/* View My Share */}
+          <Link to="/Learnig_share_recipe">
+            <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 cursor-pointer">
+              <FaEye className="text-5xl text-green-500 mb-4 mx-auto" />
+              <h2 className="text-2xl font-semibold text-green-600 mb-2">View My Share</h2>
+              <p className="text-gray-600">
+                Check all the recipes you have shared with the cooking community.
               </p>
             </div>
           </Link>
