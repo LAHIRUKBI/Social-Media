@@ -20,7 +20,7 @@ public class PostController {
     @Autowired
     private PostRepository postRepository;
 
-    private final String uploadDir = "G:/PAFPROJECT/Backend/uploads";
+    private final String uploadDir = "G:/PAFPROJECT/Backend/uploads/";
 
     @PostMapping("/create")
     public ResponseEntity<?> createPost(
