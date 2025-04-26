@@ -1,10 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function Home() {
   const navigate = useNavigate();
   const email = localStorage.getItem("userEmail");
   const name = email ? email.split("@")[0] : "Chef";
+
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await axios.get("http://localhost:8080/api/posts/all");
+        setPosts(res.data.reverse()); // show newest first
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    };
+    fetchPosts();
+  }, []);
 
   const handleLogout = () => {
     localStorage.clear();
@@ -30,37 +45,35 @@ export default function Home() {
       {/* Welcome Section */}
       <section className="text-center my-8">
         <h2 className="text-3xl font-bold text-gray-800">Welcome to CookBook, {name}!</h2>
-        <p className="text-gray-600 mt-2">Share your favorite recipes, explore others, and connect with food lovers 🍲</p>
+        <p className="text-gray-600 mt-2">
+          Share your favorite recipes, explore others, and connect with food lovers 🍲
+        </p>
       </section>
 
       {/* Feed */}
       <section className="max-w-4xl mx-auto px-4">
         <h3 className="text-xl font-semibold mb-4 text-gray-700">🔥 Trending Recipes</h3>
 
-        <div className="grid sm:grid-cols-2 gap-6">
-          {/* Post Card */}
-          <div className="bg-white rounded-lg shadow-md p-4">
-            <img
-              src="https://images.unsplash.com/photo-1604908554168-ec1fd9cda602"
-              alt="Recipe"
-              className="rounded-md mb-3 h-40 w-full object-cover"
-            />
-            <h4 className="text-lg font-semibold text-gray-800">Creamy Mushroom Pasta</h4>
-            <p className="text-sm text-gray-600">Tried this today! Super creamy and full of flavor 🍝</p>
+        {posts.length === 0 ? (
+          <p className="text-gray-500">No posts available yet. Be the first to post!</p>
+        ) : (
+          <div className="grid sm:grid-cols-2 gap-6">
+            {posts.map((post) => (
+              <div key={post.id} className="bg-white rounded-lg shadow-md p-4">
+                {post.imageUrls.length > 0 && (
+                  <img
+                    src={post.imageUrls[0]}
+                    alt="Recipe"
+                    className="rounded-md mb-3 h-40 w-full object-cover"
+                  />
+                )}
+                <h4 className="text-lg font-semibold text-gray-800">{post.email.split('@')[0]}'s Post</h4>
+                <p className="text-sm text-gray-600 mb-2">{post.description}</p>
+                <p className="text-xs text-gray-400">❤️ {post.likes} Likes • 💬 {post.comments.length} Comments</p>
+              </div>
+            ))}
           </div>
-
-          <div className="bg-white rounded-lg shadow-md p-4">
-            <img
-              src="https://images.unsplash.com/photo-1600628422012-bc1c8852a26d"
-              alt="Grilled Dish"
-              className="rounded-md mb-3 h-40 w-full object-cover"
-            />
-            <h4 className="text-lg font-semibold text-gray-800">Grilled Chicken BBQ</h4>
-            <p className="text-sm text-gray-600">Sunday dinner vibes with this smoky grill 🔥</p>
-          </div>
-
-          {/* Add more cards as needed */}
-        </div>
+        )}
       </section>
     </div>
   );
