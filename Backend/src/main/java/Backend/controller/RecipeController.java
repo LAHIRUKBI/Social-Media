@@ -30,35 +30,28 @@ public class RecipeController {
             @RequestParam("title") String title,
             @RequestParam("ingredients") String ingredients,
             @RequestParam("instructions") String instructions,
-            @RequestParam(value = "image", required = false) MultipartFile image
+            @RequestParam(value = "image", required = false) MultipartFile image,
+            @RequestParam("email") String email // 🔥 NEW PARAMETER
     ) {
         String imageUrl = null;
-
+    
         if (image != null && !image.isEmpty()) {
             try {
-                // Clean file name to prevent directory traversal
                 String fileName = StringUtils.cleanPath(image.getOriginalFilename());
                 String uploadPath = uploadDir + File.separator + fileName;
-                
-                // Create directories if not exist
                 Files.createDirectories(Paths.get(uploadDir));
-                
-                // Save file
                 image.transferTo(new File(uploadPath));
-
-                // Image URL will be something like /uploads/filename.jpg
                 imageUrl = "/uploads/" + fileName;
-
             } catch (IOException e) {
                 e.printStackTrace();
                 return ResponseEntity.status(500).body("Image upload failed!");
             }
         }
-
-        // Save the recipe to the MongoDB database
-        RecipeModel recipe = new RecipeModel(title, ingredients, instructions, imageUrl);
+    
+        // Save the recipe along with email
+        RecipeModel recipe = new RecipeModel(title, ingredients, instructions, imageUrl, email);
         recipeRepository.save(recipe);
-
+    
         return ResponseEntity.ok("Recipe added successfully!");
     }
 }

@@ -7,6 +7,8 @@ export default function Learning_add() {
   const [instructions, setInstructions] = useState('');
   const [image, setImage] = useState(null);
 
+  const userEmail = localStorage.getItem('userEmail');
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -15,6 +17,7 @@ export default function Learning_add() {
     formData.append('title', title);
     formData.append('ingredients', ingredients);
     formData.append('instructions', instructions);
+    formData.append('email', userEmail);
     if (image) {
       formData.append('image', image); // Make sure the image is properly attached
     }

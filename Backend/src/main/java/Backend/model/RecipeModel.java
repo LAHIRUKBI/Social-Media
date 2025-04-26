@@ -12,16 +12,18 @@ public class RecipeModel {
     private String title;
     private String ingredients;
     private String instructions;
-    private String imageUrl; // store image filename or path
+    private String imageUrl;
+    private String email;
 
     public RecipeModel() {
     }
 
-    public RecipeModel(String title, String ingredients, String instructions, String imageUrl) {
+    public RecipeModel(String title, String ingredients, String instructions, String imageUrl, String email) {
         this.title = title;
         this.ingredients = ingredients;
         this.instructions = instructions;
         this.imageUrl = imageUrl;
+        this.email = email;
     }
 
     // Getters and Setters
@@ -64,5 +66,12 @@ public class RecipeModel {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
