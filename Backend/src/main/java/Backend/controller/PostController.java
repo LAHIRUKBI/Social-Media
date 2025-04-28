@@ -92,4 +92,48 @@ public class PostController {
         post.getComments().add(comment);
         return postRepository.save(post);
     }
+
+    @PutMapping("/update/{id}")
+public ResponseEntity<?> updatePost(@PathVariable String id, 
+                                    @RequestParam(required = false) String description,
+                                    @RequestParam(required = false) MultipartFile[] images) {
+    Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
+
+    // Update post description
+    if (description != null) {
+        post.setDescription(description);
+    }
+
+    // Handle new images if any (remove old images and add new ones)
+    if (images != null && images.length > 0) {
+        List<String> imageUrls = new ArrayList<>();
+        File folder = new File(uploadDir);
+        if (!folder.exists()) folder.mkdirs();
+
+        // Remove old images (or clear the list)
+        post.setImageUrls(new ArrayList<>());
+
+        // Save new images
+        for (MultipartFile file : images) {
+            if (!file.isEmpty()) {
+                String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                File destination = new File(uploadDir + fileName);
+                try {
+                    file.transferTo(destination);
+                    imageUrls.add("http://localhost:8080/uploads/" + fileName);
+                } catch (IOException e) {
+                    return ResponseEntity.status(500).body("Error saving images: " + e.getMessage());
+                }
+            }
+        }
+
+        // Add the new images to the post's imageUrls
+        post.setImageUrls(imageUrls);
+    }
+
+    // Save the updated post to the repository
+    Post savedPost = postRepository.save(post);
+    return ResponseEntity.ok(savedPost);
+}
+
 }
