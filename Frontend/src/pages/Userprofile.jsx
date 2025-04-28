@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 export default function Userprofile() {
   const navigate = useNavigate();
@@ -8,6 +13,7 @@ export default function Userprofile() {
   const name = email ? email.split("@")[0] : "User";
   const [profileImage, setProfileImage] = useState("https://i.pravatar.cc/150?img=3");
   const [coverImage, setCoverImage] = useState("https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e");
+  const [posts, setPosts] = useState([]);
   const profileImageInputRef = useRef(null);
   const coverImageInputRef = useRef(null);
 
@@ -20,6 +26,13 @@ export default function Userprofile() {
           }
         })
         .catch(err => console.error("Error fetching user:", err));
+      
+      // Fetch user posts
+      axios.get(`http://localhost:8080/api/posts/user?email=${email}`)
+        .then(res => {
+          setPosts(res.data);
+        })
+        .catch(err => console.error("Error fetching posts:", err));
     }
   }, [email]);
 
@@ -56,24 +69,23 @@ export default function Userprofile() {
   };
 
   const handleCoverImageChange = async (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    const formData = new FormData();
-    formData.append("image", file);
+    const file = e.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append("image", file);
 
-    try {
-      const res = await axios.put(`http://localhost:8080/api/users/uploadCover/${email}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
-      if (res.data.coverImage) {
-        // Set the new cover image URL
-        setCoverImage(res.data.coverImage);
+      try {
+        const res = await axios.put(`http://localhost:8080/api/users/uploadCover/${email}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
+        if (res.data.coverImage) {
+          setCoverImage(res.data.coverImage);
+        }
+      } catch (err) {
+        console.error("Error uploading cover image:", err);
       }
-    } catch (err) {
-      console.error("Error uploading cover image:", err);
     }
-  }
-};  
+  };
 
   return (
     <div className="bg-gray-100 min-h-screen py-8 px-4">
@@ -121,7 +133,7 @@ export default function Userprofile() {
             <div className="mt-4 space-y-2 text-sm text-gray-600">
               <p><span className="font-semibold">Email:</span> {email}</p>
               <p><span className="font-semibold">Followers:</span> 120</p>
-              <p><span className="font-semibold">Posts:</span> 35</p>
+              <p><span className="font-semibold">Posts:</span> {posts.length}</p>
             </div>
           </div>
         </div>
@@ -132,29 +144,49 @@ export default function Userprofile() {
             onClick={() => navigate("/Post_add")}
             className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold text-sm px-6 py-3 rounded-full transition-all shadow-md"
           >
-            ➕ Add New Post
+            Add New Post
           </button>
           <button
             onClick={() => navigate("/Post_views")}
             className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold text-sm px-6 py-3 rounded-full transition-all shadow-md"
           >
-            👀 View Posts
+            View Posts
           </button>
         </div>
 
         {/* Posts Section */}
         <div className="px-8 pb-8">
           <h3 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Recent Posts</h3>
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="bg-gray-50 p-6 rounded-xl shadow hover:shadow-md transition">
-              <h4 className="font-bold text-lg text-gray-800 mb-2">My Spaghetti Recipe 🍝</h4>
-              <p className="text-gray-600 text-sm">Just tried out this new recipe and it turned out amazing!</p>
+          {posts.length > 0 ? (
+            <div className="grid gap-6 md:grid-cols-2">
+              {posts.map(post => (
+                <div key={post.id} className="bg-gray-50 p-6 rounded-xl shadow hover:shadow-md transition">
+                  <div className="w-full h-64 mb-4">
+                    <Swiper
+                      modules={[Navigation, Pagination]}
+                      navigation
+                      pagination={{ clickable: true }}
+                      className="h-full"
+                    >
+                      {post.imageUrls.map((url, idx) => (
+                        <SwiperSlide key={idx}>
+                          <img
+                            src={url}
+                            alt="Post"
+                            className="w-full h-64 object-cover rounded-lg"
+                          />
+                        </SwiperSlide>
+                      ))}
+                    </Swiper>
+                  </div>
+                  <h4 className="font-bold text-lg text-gray-800 mb-2">{post.description}</h4>
+                  <p className="text-gray-600 text-sm">❤️ {post.likes} Likes</p>
+                </div>
+              ))}
             </div>
-            <div className="bg-gray-50 p-6 rounded-xl shadow hover:shadow-md transition">
-              <h4 className="font-bold text-lg text-gray-800 mb-2">Grill Night 🔥</h4>
-              <p className="text-gray-600 text-sm">Had a great time grilling with the fam!</p>
-            </div>
-          </div>
+          ) : (
+            <p className="text-gray-500 text-center">You haven't posted anything yet.</p>
+          )}
         </div>
 
       </div>
