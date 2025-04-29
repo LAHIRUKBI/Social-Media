@@ -181,6 +181,16 @@ export default function Userprofile() {
                   </div>
                   <h4 className="font-bold text-lg text-gray-800 mb-2">{post.description}</h4>
                   <p className="text-gray-600 text-sm">❤️ {post.likes} Likes</p>
+{post.likedBy && post.likedBy.length > 0 && (
+  <p className="text-xs text-gray-500 mt-1">
+    Liked by: {post.likedBy.map((email, index) => (
+      <span key={index}>
+        {email.split('@')[0]}{index < post.likedBy.length - 1 ? ', ' : ''}
+      </span>
+    ))}
+  </p>
+)}
+
                 </div>
               ))}
             </div>
