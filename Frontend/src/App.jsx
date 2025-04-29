@@ -17,17 +17,16 @@ export default function App() {
     <BrowserRouter>
     <Navigation />
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/Sign" element={<Sign />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/Userprofile" element={<Userprofile />} />
-        <Route path="/Home" element={<Home />} />
         <Route path="/Post_add" element={<Post_add />} />
         <Route path="/Post_views" element={<Post_views />} />
         <Route path="/Learning_Home" element={<Learning_Home />} />
         <Route path="/Learning_add" element={<Learning_add />} />
         <Route path="/Learnig_share_recipe" element={<Learnig_share_recipe />} />
         <Route path="/Post_update" element={<Post_update />} />
-        
       </Routes>
     </BrowserRouter>
   )
