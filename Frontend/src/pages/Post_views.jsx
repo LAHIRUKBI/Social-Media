@@ -22,6 +22,21 @@ export default function Post_views() {
     navigate('/Post_update', { state: { post } });
   };
 
+
+  const handleDelete = async (postId) => {
+    const confirm = window.confirm("Are you sure you want to delete this post?");
+    if (!confirm) return;
+  
+    try {
+      await axios.delete(`http://localhost:8080/api/posts/delete/${postId}`);
+      setPosts(posts.filter(post => post.id !== postId));
+    } catch (err) {
+      alert("Failed to delete the post.");
+      console.error(err);
+    }
+  };
+  
+
   return (
     <div className="max-w-6xl mx-auto mt-10 px-4">
       <h2 className="text-3xl font-bold mb-8 text-gray-800 text-center">My Posts</h2>
@@ -49,11 +64,19 @@ export default function Post_views() {
             <div className="p-4">
               <p className="text-gray-800 font-semibold text-lg mb-2">{post.description}</p>
               <p className="text-gray-600 text-sm">❤️ {post.likes} Likes</p>
-              <button 
-                onClick={() => handleUpdate(post)} 
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-full">
-                Update
-              </button>
+              <div className="flex justify-between mt-4">
+  <button 
+    onClick={() => handleUpdate(post)} 
+    className="px-4 py-2 bg-blue-500 text-white rounded-full mr-2">
+    Update
+  </button>
+  <button
+    onClick={() => handleDelete(post.id)}
+    className="px-4 py-2 bg-red-500 text-white rounded-full">
+    Remove
+  </button>
+</div>
+
             </div>
           </div>
         ))}
