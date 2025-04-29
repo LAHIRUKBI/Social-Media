@@ -104,46 +104,58 @@ export default function Home() {
       </section>
 
       {/* Trending Posts */}
-      <section className="max-w-7xl mx-auto px-6 mb-16">
-        <h3 className="text-2xl font-semibold mb-6 text-gray-700">🔥 Trending Posts</h3>
+<section className="max-w-7xl mx-auto px-6 mb-16">
+  <h3 className="text-3xl font-bold mb-8 text-gray-800 tracking-tight">
+    🔥 Trending Posts
+  </h3>
 
-        {posts.length === 0 && allRecipes.length === 0 ? (
-          <p className="text-lg text-gray-500">No recipes or posts available yet. Be the first to post!</p>
-        ) : (
-          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.map((post) => (
-              <div key={post.id} className="bg-white rounded-lg shadow-lg p-6 transition transform hover:scale-105">
-                {post.imageUrls.length > 0 && (
-                  <img
-                    src={post.imageUrls[0]}
-                    alt="Recipe"
-                    className="rounded-md mb-4 h-48 w-full object-cover"
-                  />
-                )}
-                <h4 className="text-lg font-semibold text-gray-800">{post.email.split('@')[0]}'s Post</h4>
-                <p className="text-sm text-gray-600 mb-3">{post.description}</p>
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <span>❤️ {post.likes} Likes • 💬 {post.comments.length} Comments</span>
-                </div>
-                <div className="flex gap-4 mt-4 justify-center">
-                  <button
-                    onClick={() => handleLikePost(post.id)}
-                    className="text-orange-500 hover:underline"
-                  >
-                    Like
-                  </button>
-                  <button
-                    onClick={() => handleCommentPost(post.id, "Nice recipe!")}
-                    className="text-blue-500 hover:underline"
-                  >
-                    Comment
-                  </button>
-                </div>
-              </div>
-            ))}
+  {posts.length === 0 && allRecipes.length === 0 ? (
+    <p className="text-lg text-gray-500 text-center bg-gray-100 p-6 rounded-xl shadow-inner">
+      No recipes or posts available yet. Be the first to post!
+    </p>
+  ) : (
+    <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+      {posts.map((post) => (
+        <div
+          key={post.id}
+          className="bg-white rounded-2xl shadow-xl p-6 transition-transform duration-300 hover:scale-105 hover:shadow-2xl"
+        >
+          {post.imageUrls.length > 0 && (
+            <img
+              src={post.imageUrls[0]}
+              alt="Recipe"
+              className="rounded-xl mb-4 h-52 w-full object-cover shadow-sm"
+            />
+          )}
+          <h4 className="text-xl font-semibold text-gray-900 mb-1">
+            {post.email.split('@')[0]}'s Post
+          </h4>
+          <p className="text-sm text-gray-700 mb-4 line-clamp-3">{post.description}</p>
+
+          <div className="flex items-center justify-between text-sm text-gray-500 border-t pt-3">
+            <span>❤️ {post.likes} Likes • 💬 {post.comments.length} Comments</span>
           </div>
-        )}
-      </section>
+
+          <div className="flex gap-4 mt-4 justify-center">
+            <button
+              onClick={() => handleLikePost(post.id)}
+              className="text-orange-500 hover:underline font-medium"
+            >
+              👍 Like
+            </button>
+            <button
+              onClick={() => handleCommentPost(post.id, 'Nice recipe!')}
+              className="text-blue-500 hover:underline font-medium"
+            >
+              💬 Comment
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</section>
+
 
       {/* All Recipes */}
       <section className="max-w-7xl mx-auto px-6 mb-16">
