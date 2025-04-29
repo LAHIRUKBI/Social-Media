@@ -20,7 +20,7 @@ export default function Login() {
 
       if (response.data === "Login successful!") {
         localStorage.setItem("userEmail", email);
-        setTimeout(() => navigate('/Home'), 1000);
+        setTimeout(() => navigate('/'), 1000);
       }
 
     } catch (err) {
