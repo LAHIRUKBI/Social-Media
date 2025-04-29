@@ -78,7 +78,7 @@ export default function Userprofile() {
           headers: { "Content-Type": "multipart/form-data" }
         });
         if (res.data.coverImage) {
-          setCoverImage(res.data.coverImage);
+          setCoverImage(`http://localhost:8080/api/users/images/${res.data.coverImage}`);
         }
       } catch (err) {
         console.error("Error uploading cover image:", err);
