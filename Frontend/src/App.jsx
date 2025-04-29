@@ -12,6 +12,7 @@ import Learning_add from './pages/Learning_add';
 import Learnig_share_recipe from './pages/Learnig_share_recipe';
 import Post_update from './pages/Post_update';
 import Footer from './Components/Footer';
+import About_us from './pages/About_us';
 
 export default function App() {
   return (
@@ -28,6 +29,8 @@ export default function App() {
         <Route path="/Learning_add" element={<Learning_add />} />
         <Route path="/Learnig_share_recipe" element={<Learnig_share_recipe />} />
         <Route path="/Post_update" element={<Post_update />} />
+        <Route path="/About_us" element={<About_us />} />
+
 
       </Routes>
       <Footer />
