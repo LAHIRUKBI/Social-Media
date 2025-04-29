@@ -87,20 +87,20 @@ export default function Userprofile() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-orange-50 to-yellow-50 min-h-screen py-10 px-4">
-      <div className="max-w-6xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden relative">
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen py-10 px-4">
+      <div className="max-w-6xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden relative border border-gray-100">
 
         {/* Logout Button */}
         <button
           onClick={handleLogout}
-          className="absolute top-6 right-6 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold px-5 py-2 rounded-full shadow-md transition"
+          className="absolute top-6 right-6 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-5 py-2 rounded-full shadow-md transition"
         >
           Logout
         </button>
 
         {/* Cover Photo */}
         <div
-          className="h-64 bg-cover bg-center cursor-pointer"
+          className="h-80 bg-cover bg-center rounded-xl cursor-pointer"
           style={{ backgroundImage: `url(${coverImage})` }}
           onClick={handleCoverImageClick}
         >
@@ -119,7 +119,7 @@ export default function Userprofile() {
             <img
               src={profileImage}
               alt="Profile"
-              className="w-36 h-36 rounded-full border-4 border-white -mt-20 shadow-xl object-cover cursor-pointer transition hover:scale-105"
+              className="w-36 h-36 rounded-full border-4 border-white -mt-24 shadow-xl object-cover cursor-pointer transition-all hover:scale-105"
               onClick={handleProfileImageClick}
             />
             <input
@@ -130,9 +130,9 @@ export default function Userprofile() {
               onChange={handleProfileImageChange}
             />
           </div>
-          <div className="mt-6 md:mt-0 md:ml-10 text-center md:text-left">
-            <h2 className="text-4xl font-bold text-gray-800">{name}</h2>
-            <p className="text-gray-500 mt-1">Food Enthusiast | Home Cook</p>
+          <div className="mt-6 md:mt-0 md:ml-8 text-center md:text-left">
+            <h2 className="text-3xl font-semibold text-gray-800">{name}</h2>
+            <p className="text-gray-500 mt-2">Food Enthusiast | Home Cook</p>
             <div className="mt-4 space-y-1 text-sm text-gray-600">
               <p><span className="font-semibold">Email:</span> {email}</p>
               <p><span className="font-semibold">Followers:</span> 120</p>
@@ -142,16 +142,16 @@ export default function Userprofile() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col md:flex-row justify-center gap-4 md:gap-8 mt-6 mb-10">
+        <div className="flex flex-col md:flex-row justify-center gap-4 md:gap-8 mt-8 mb-10">
           <button
             onClick={() => navigate("/Post_add")}
-            className="bg-green-500 hover:bg-green-600 text-white font-medium px-6 py-3 rounded-full shadow-md transition"
+            className="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-3 rounded-full shadow-md transition"
           >
             ➕ Add New Post
           </button>
           <button
             onClick={() => navigate("/Post_views")}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-3 rounded-full shadow-md transition"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-full shadow-md transition"
           >
             📸 View Posts
           </button>
@@ -163,7 +163,7 @@ export default function Userprofile() {
           {posts.length > 0 ? (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {posts.map(post => (
-                <div key={post.id} className="bg-white p-4 rounded-2xl shadow hover:shadow-lg transition-all border border-gray-100">
+                <div key={post.id} className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all border border-gray-200">
                   <div className="w-full h-60 mb-4 rounded-xl overflow-hidden">
                     <Swiper
                       modules={[Navigation, Pagination]}
