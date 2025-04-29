@@ -4,8 +4,13 @@ import Backend.model.User;
 import Backend.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.core.io.Resource;
+
+
 
 import java.io.File;
 import java.io.IOException;
@@ -65,6 +70,37 @@ public User uploadProfileImage(@PathVariable String email, @RequestParam("image"
     return userRepository.save(user);
 }
 
+
+
+@PutMapping("/uploadCover/{email}")
+public User uploadCoverImage(@PathVariable String email, @RequestParam("image") MultipartFile image) throws IOException {
+    User user = userRepository.findByEmail(email);
+    if (user == null) {
+        throw new RuntimeException("User not found!");
+    }
+
+    // Save image to uploads folder
+    String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
+    File dest = new File(UPLOAD_DIR + fileName);
+    image.transferTo(dest);
+
+    // Save ONLY the filename
+    user.setCoverImage(fileName);
+
+    return userRepository.save(user);
+}
+
+
+
+@GetMapping("/images/{filename:.+}")
+public ResponseEntity<Resource> getImage(@PathVariable String filename) throws IOException {
+    File file = new File(UPLOAD_DIR + filename);
+    Resource resource = new UrlResource(file.toURI());
+    if (!resource.exists()) {
+        throw new RuntimeException("Image not found: " + filename);
+    }
+    return ResponseEntity.ok().body(resource);
+}
 
 
 }
