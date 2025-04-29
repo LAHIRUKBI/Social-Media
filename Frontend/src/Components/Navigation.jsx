@@ -1,21 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 export default function Navigation() {
-  const [username, setUsername] = useState('');
+  const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
     const email = localStorage.getItem("userEmail");
     if (email) {
-      const name = email.split("@")[0];
-      setUsername(name);
+      axios.get(`http://localhost:8080/api/users/${email}`)
+        .then(res => {
+          if (res.data.profileImage) {
+            setProfileImage(`http://localhost:8080/${res.data.profileImage}`);
+          }
+        })
+        .catch(err => {
+          console.error("Failed to fetch profile image:", err);
+        });
     }
   }, []);
 
   return (
     <nav className="bg-white shadow-lg sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        
+
         {/* Logo */}
         <div className="text-3xl font-extrabold text-red-600 tracking-wide">
           Cook<span className="text-gray-800">Book</span>
@@ -41,19 +49,21 @@ export default function Navigation() {
           >
             Learning Plans
           </Link>
-          {username ? (
-            <Link 
-              to="/Userprofile" 
-              className="bg-red-500 text-white px-4 py-2 rounded-full shadow hover:bg-red-600 transition duration-300"
-            >
-              {username}
+
+          {profileImage ? (
+            <Link to="/Userprofile">
+              <img
+                src={profileImage}
+                alt="Profile"
+                className="w-10 h-10 rounded-full object-cover border-2 border-red-500 hover:scale-105 transition"
+              />
             </Link>
           ) : (
             <Link 
               to="/sign" 
-              className="bg-gray-800 text-white px-4 py-2 rounded-full shadow hover:bg-gray-900 transition duration-300"
+              className="bg-gray-800 text-white px-4 py-2 rounded-full shadow hover:bg-gray-700 transition duration-300"
             >
-              Signin
+              Sign In
             </Link>
           )}
         </div>
