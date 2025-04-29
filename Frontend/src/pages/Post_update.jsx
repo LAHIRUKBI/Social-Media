@@ -10,78 +10,84 @@ export default function Post_update() {
   const [imageFiles, setImageFiles] = useState([]);
   const navigate = useNavigate();
 
-  // Handle file selection
   const handleImageChange = (event) => {
     const files = event.target.files;
     setImageFiles(files);
   };
 
-  // Handle form submission
-  // Handle form submission
-const handleUpdate = () => {
+  const handleUpdate = () => {
     const formData = new FormData();
     formData.append('description', description);
-  
-    // Append selected image files
+
     Array.from(imageFiles).forEach(file => {
       formData.append('images', file);
     });
-  
-    // Send PUT request to update the post
+
     axios.put(`http://localhost:8080/api/posts/update/${post.id}`, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data', // Set the content type for multipart form data
+        'Content-Type': 'multipart/form-data',
       }
     })
-    .then(response => {
-      console.log("Post updated:", response.data);
-      navigate('/Post_views');  // Navigate back to the post views page
-    })
-    .catch(error => {
-      console.error("Error updating post:", error);
-    });
+      .then(response => {
+        console.log("Post updated:", response.data);
+        navigate('/Post_views');
+      })
+      .catch(error => {
+        console.error("Error updating post:", error);
+      });
   };
-  
-  
 
   return (
-    <div className="max-w-6xl mx-auto mt-10 px-4">
-      <h2 className="text-3xl font-bold mb-8 text-gray-800 text-center">Update Post</h2>
-      <div className="bg-white p-8 rounded-lg shadow-lg">
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Description</label>
+    <div className="max-w-4xl mx-auto mt-16 px-6">
+      <h2 className="text-4xl font-extrabold text-center text-blue-700 mb-10">Update Your Post</h2>
+      <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+        {/* Description */}
+        <div className="mb-6">
+          <label className="block text-sm font-semibold text-gray-600 mb-2">Post Description</label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full p-2 border rounded-lg"
+            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
             rows="5"
+            placeholder="Write something about your post..."
           />
         </div>
 
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Select New Images (optional)</label>
+        {/* New Images */}
+        <div className="mb-6">
+          <label className="block text-sm font-semibold text-gray-600 mb-2">Upload New Images (optional)</label>
           <input
             type="file"
             onChange={handleImageChange}
-            className="w-full p-2 border rounded-lg"
+            className="w-full border border-gray-300 p-3 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
             multiple
           />
         </div>
 
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Current Images</label>
-          <div className="flex space-x-4">
+        {/* Current Images */}
+        <div className="mb-6">
+          <label className="block text-sm font-semibold text-gray-600 mb-2">Current Images</label>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {imageUrls.map((url, index) => (
-              <img key={index} src={url} alt={`Post Image ${index}`} className="w-32 h-32 object-cover rounded-lg" />
+              <img
+                key={index}
+                src={url}
+                alt={`Post Image ${index}`}
+                className="w-full h-40 object-cover rounded-xl border border-gray-200 shadow"
+              />
             ))}
           </div>
         </div>
 
-        <button 
-          onClick={handleUpdate} 
-          className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg">
-          Update Post
-        </button>
+        {/* Update Button */}
+        <div className="text-center">
+          <button
+            onClick={handleUpdate}
+            className="bg-blue-600 hover:bg-blue-700 transition text-white font-semibold py-3 px-8 rounded-full shadow-md"
+          >
+            Update Post
+          </button>
+        </div>
       </div>
     </div>
   );
