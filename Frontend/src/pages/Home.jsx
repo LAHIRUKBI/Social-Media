@@ -38,13 +38,21 @@ export default function Home() {
     navigate('/Login');
   };
 
-  const handleLikePost = (postId) => {
-    setPosts(prevPosts =>
-      prevPosts.map(post =>
-        post.id === postId ? { ...post, likes: post.likes + 1 } : post
-      )
-    );
+  const handleLikePost = async (postId) => {
+    try {
+      const res = await axios.put(`http://localhost:8080/api/posts/like/${postId}`, null, {
+        params: { userEmail: email },
+      });
+      const updatedPost = res.data;
+  
+      setPosts((prevPosts) =>
+        prevPosts.map((post) => (post.id === postId ? updatedPost : post))
+      );
+    } catch (error) {
+      console.error("Error liking/unliking post:", error);
+    }
   };
+  
 
   const handleCommentPost = (postId, comment) => {
     setPosts(prevPosts =>
