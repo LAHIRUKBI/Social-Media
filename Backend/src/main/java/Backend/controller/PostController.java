@@ -79,12 +79,26 @@ public class PostController {
         return postRepository.findAll();
     }
 
-    @PostMapping("/like/{id}")
-    public Post likePost(@PathVariable String id) {
-        Post post = postRepository.findById(id).orElseThrow();
-        post.setLikes(post.getLikes() + 1);
-        return postRepository.save(post);
-    }
+    @PutMapping("/like/{postId}")
+public ResponseEntity<?> toggleLike(@PathVariable String postId, @RequestParam String userEmail) {
+    return postRepository.findById(postId).map(post -> {
+        if (post.getLikedBy() == null) post.setLikedBy(new ArrayList<>());
+
+        List<String> likedBy = post.getLikedBy();
+        if (likedBy.contains(userEmail)) {
+            likedBy.remove(userEmail);
+            post.setLikes(post.getLikes() - 1);
+        } else {
+            likedBy.add(userEmail);
+            post.setLikes(post.getLikes() + 1);
+        }
+
+        post.setLikedBy(likedBy);
+        postRepository.save(post);
+        return ResponseEntity.ok(post);
+    }).orElse(ResponseEntity.notFound().build());
+}
+
 
     @PostMapping("/comment/{id}")
     public Post addComment(@PathVariable String id, @RequestBody String comment) {
