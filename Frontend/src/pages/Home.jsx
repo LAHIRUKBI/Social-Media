@@ -52,7 +52,6 @@ export default function Home() {
       console.error("Error liking/unliking post:", error);
     }
   };
-  
 
   const handleCommentPost = (postId, comment) => {
     setPosts(prevPosts =>
@@ -79,16 +78,16 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-gradient-to-b from-orange-50 to-white min-h-screen">
+    <div className="bg-gradient-to-r from-blue-50 via-white to-gray-100 min-h-screen">
 
       {/* Navbar */}
-      <nav className="flex justify-between items-center bg-white shadow-lg px-8 py-6">
-        <h1 className="text-3xl font-bold text-orange-600 tracking-wide">🍳 CookBook</h1>
+      <nav className="flex justify-between items-center bg-gradient-to-r from-orange-400 to-orange-500 text-white p-6 shadow-lg">
+        <h1 className="text-3xl font-extrabold tracking-wide">🍳 CookBook</h1>
         <div className="flex items-center gap-6">
-          <span className="text-xl font-medium text-gray-700">Hi, {name}!</span>
+          <span className="text-lg font-medium">Hi, {name}!</span>
           <button
             onClick={handleLogout}
-            className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-full shadow-lg transition"
+            className="bg-white text-orange-600 px-6 py-3 rounded-full shadow-lg hover:bg-gray-200 transition duration-300"
           >
             Logout
           </button>
@@ -96,7 +95,7 @@ export default function Home() {
       </nav>
 
       {/* Welcome Section */}
-      <section className="text-center my-12">
+      <section className="text-center my-12 px-4">
         <h2 className="text-4xl font-bold text-gray-800">Welcome to CookBook, {name}!</h2>
         <p className="text-lg text-gray-600 mt-3">
           Share your favorite recipes, explore others, and connect with food lovers 🍲
@@ -104,58 +103,55 @@ export default function Home() {
       </section>
 
       {/* Trending Posts */}
-<section className="max-w-7xl mx-auto px-6 mb-16">
-  <h3 className="text-3xl font-bold mb-8 text-gray-800 tracking-tight">
-    🔥 Trending Posts
-  </h3>
+      <section className="max-w-7xl mx-auto px-6 mb-16">
+        <h3 className="text-3xl font-bold mb-8 text-gray-800">🔥 Trending Posts</h3>
 
-  {posts.length === 0 && allRecipes.length === 0 ? (
-    <p className="text-lg text-gray-500 text-center bg-gray-100 p-6 rounded-xl shadow-inner">
-      No recipes or posts available yet. Be the first to post!
-    </p>
-  ) : (
-    <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-      {posts.map((post) => (
-        <div
-          key={post.id}
-          className="bg-white rounded-2xl shadow-xl p-6 transition-transform duration-300 hover:scale-105 hover:shadow-2xl"
-        >
-          {post.imageUrls.length > 0 && (
-            <img
-              src={post.imageUrls[0]}
-              alt="Recipe"
-              className="rounded-xl mb-4 h-52 w-full object-cover shadow-sm"
-            />
-          )}
-          <h4 className="text-xl font-semibold text-gray-900 mb-1">
-            {post.email.split('@')[0]}'s Post
-          </h4>
-          <p className="text-sm text-gray-700 mb-4 line-clamp-3">{post.description}</p>
+        {posts.length === 0 && allRecipes.length === 0 ? (
+          <p className="text-lg text-gray-500 text-center bg-gray-200 p-6 rounded-xl shadow-inner">
+            No recipes or posts available yet. Be the first to post!
+          </p>
+        ) : (
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {posts.map((post) => (
+              <div
+                key={post.id}
+                className="bg-white rounded-2xl shadow-xl p-6 transition-transform duration-300 hover:scale-105 hover:shadow-2xl transform hover:shadow-lg"
+              >
+                {post.imageUrls.length > 0 && (
+                  <img
+                    src={post.imageUrls[0]}
+                    alt="Recipe"
+                    className="rounded-xl mb-4 h-52 w-full object-cover shadow-sm"
+                  />
+                )}
+                <h4 className="text-xl font-semibold text-gray-900 mb-1">
+                  {post.email.split('@')[0]}'s Post
+                </h4>
+                <p className="text-sm text-gray-700 mb-4">{post.description}</p>
 
-          <div className="flex items-center justify-between text-sm text-gray-500 border-t pt-3">
-            <span>❤️ {post.likes} Likes • 💬 {post.comments.length} Comments</span>
+                <div className="flex items-center justify-between text-sm text-gray-500 border-t pt-3">
+                  <span>❤️ {post.likes} Likes • 💬 {post.comments.length} Comments</span>
+                </div>
+
+                <div className="flex gap-4 mt-4 justify-center">
+                  <button
+                    onClick={() => handleLikePost(post.id)}
+                    className="text-orange-500 hover:underline font-medium"
+                  >
+                    👍 Like
+                  </button>
+                  <button
+                    onClick={() => handleCommentPost(post.id, 'Nice recipe!')}
+                    className="text-blue-500 hover:underline font-medium"
+                  >
+                    💬 Comment
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-
-          <div className="flex gap-4 mt-4 justify-center">
-            <button
-              onClick={() => handleLikePost(post.id)}
-              className="text-orange-500 hover:underline font-medium"
-            >
-              👍 Like
-            </button>
-            <button
-              onClick={() => handleCommentPost(post.id, 'Nice recipe!')}
-              className="text-blue-500 hover:underline font-medium"
-            >
-              💬 Comment
-            </button>
-          </div>
-        </div>
-      ))}
-    </div>
-  )}
-</section>
-
+        )}
+      </section>
 
       {/* All Recipes */}
       <section className="max-w-7xl mx-auto px-6 mb-16">
