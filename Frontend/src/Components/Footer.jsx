@@ -1,7 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaFacebookF, FaInstagram, FaTwitter, FaYoutube } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 export default function Footer() {
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    if (password === '22160102') {
+      navigate('/Add_New_Recipes');
+    } else {
+      setError('Incorrect password');
+    }
+  };
+
   return (
     <footer className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white py-12 px-6 mt-20">
       <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
@@ -11,6 +25,36 @@ export default function Footer() {
           <p className="text-gray-400 text-sm leading-relaxed">
             Discover, share, and connect through food. CookConnect is your daily dose of culinary inspiration and community.
           </p>
+
+          {/* Admin Button */}
+          <div className="mt-6">
+            <button
+              onClick={() => setShowAdminLogin(!showAdminLogin)}
+              className="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition"
+            >
+              Admin
+            </button>
+
+            {/* Admin Login Box */}
+            {showAdminLogin && (
+              <div className="mt-4 bg-gray-800 p-4 rounded-lg shadow-md">
+                <input
+                  type="password"
+                  placeholder="Enter Admin Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-3 py-2 mb-2 rounded bg-gray-700 text-white border border-gray-600"
+                />
+                {error && <p className="text-red-400 text-sm mb-2">{error}</p>}
+                <button
+                  onClick={handleLogin}
+                  className="w-full bg-teal-600 hover:bg-teal-700 text-white py-2 rounded font-semibold"
+                >
+                  LOGIN
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Navigation */}

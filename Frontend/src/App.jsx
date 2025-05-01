@@ -16,6 +16,7 @@ import Learn_New_Recipes from './pages/Learn_New_Recipes';
 
 import Footer from './Components/Footer';
 import About_us from './pages/About_us';
+import Add_New_Recipes from './pages/Add_New_Recipes';
 
 export default function App() {
   return (
@@ -32,10 +33,9 @@ export default function App() {
         <Route path="/Learning_add" element={<Learning_add />} />
         <Route path="/Learnig_share_recipe" element={<Learnig_share_recipe />} />
         <Route path="/Post_update" element={<Post_update />} />
-
         <Route path="/Learn_New_Recipes" element={<Learn_New_Recipes />} />
-
         <Route path="/About_us" element={<About_us />} />
+        <Route path="/Add_New_Recipes" element={<Add_New_Recipes />} />
 
 
 
