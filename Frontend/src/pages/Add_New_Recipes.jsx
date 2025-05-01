@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';  // Import the useNavigate hook from react-router-dom
 
 export default function Add_New_Recipes() {
   const [recipeName, setRecipeName] = useState('');
@@ -8,6 +9,9 @@ export default function Add_New_Recipes() {
   const [ingredients, setIngredients] = useState([]);
   const [methodSteps, setMethodSteps] = useState(['']);
   const [videoFile, setVideoFile] = useState(null);
+
+  // Initialize the navigate function for navigation
+  const navigate = useNavigate();
 
   const addIngredient = () => {
     if (ingredientName && ingredientQty) {
@@ -64,12 +68,20 @@ export default function Add_New_Recipes() {
       alert('Failed to add recipe. ' + (err.response?.data || 'Unknown error'));
     }
   };
-  
 
-
+  // Handle navigation to the "View_Learn_Recipe" page
+  const handleViewRecipe = () => {
+    navigate('/View_Learn_Recipe');
+  };
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white rounded shadow mt-10">
+
+      {/* View Recipe Button */}
+      <button
+        onClick={handleViewRecipe}
+        className="bg-teal-600 text-white px-6 py-2 mt-4 rounded"
+      >View Recipe</button>
       <h2 className="text-2xl font-bold mb-4">Add New Recipe</h2>
 
       <input
@@ -131,6 +143,8 @@ export default function Add_New_Recipes() {
         onClick={handleSubmit}
         className="bg-green-600 text-white px-6 py-2 rounded"
       >Add To Learns</button>
+
+      
     </div>
   );
 }
