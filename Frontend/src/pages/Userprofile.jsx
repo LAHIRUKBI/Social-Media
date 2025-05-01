@@ -26,8 +26,7 @@ export default function Userprofile() {
           }
         })
         .catch(err => console.error("Error fetching user:", err));
-      
-      // Fetch user posts
+
       axios.get(`http://localhost:8080/api/posts/user?email=${email}`)
         .then(res => {
           setPosts(res.data);
@@ -79,7 +78,7 @@ export default function Userprofile() {
           headers: { "Content-Type": "multipart/form-data" }
         });
         if (res.data.coverImage) {
-          setCoverImage(res.data.coverImage);
+          setCoverImage(`http://localhost:8080/api/users/images/${res.data.coverImage}`);
         }
       } catch (err) {
         console.error("Error uploading cover image:", err);
@@ -88,19 +87,23 @@ export default function Userprofile() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen py-8 px-4">
-      <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden relative">
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen py-10 px-4">
+      <div className="max-w-6xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden relative border border-gray-100">
 
         {/* Logout Button */}
         <button
           onClick={handleLogout}
-          className="absolute top-6 right-6 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold px-5 py-2 rounded-full shadow-md transition-all"
+          className="absolute top-6 right-6 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-5 py-2 rounded-full shadow-md transition"
         >
           Logout
         </button>
 
         {/* Cover Photo */}
-        <div className="h-64 bg-cover bg-center cursor-pointer" style={{ backgroundImage: `url(${coverImage})` }} onClick={handleCoverImageClick}>
+        <div
+          className="h-80 bg-cover bg-center rounded-xl cursor-pointer"
+          style={{ backgroundImage: `url(${coverImage})` }}
+          onClick={handleCoverImageClick}
+        >
           <input
             type="file"
             ref={coverImageInputRef}
@@ -111,12 +114,12 @@ export default function Userprofile() {
         </div>
 
         {/* Profile Info */}
-        <div className="flex flex-col md:flex-row items-center md:items-start px-8 py-6">
+        <div className="flex flex-col md:flex-row items-center md:items-start px-8 py-8 bg-white">
           <div className="relative">
             <img
               src={profileImage}
               alt="Profile"
-              className="w-36 h-36 rounded-full border-4 border-white -mt-20 shadow-xl object-cover cursor-pointer"
+              className="w-36 h-36 rounded-full border-4 border-white -mt-24 shadow-xl object-cover cursor-pointer transition-all hover:scale-105"
               onClick={handleProfileImageClick}
             />
             <input
@@ -128,9 +131,9 @@ export default function Userprofile() {
             />
           </div>
           <div className="mt-6 md:mt-0 md:ml-8 text-center md:text-left">
-            <h2 className="text-4xl font-bold text-gray-800">{name}</h2>
-            <p className="text-gray-500 mt-1">Food Enthusiast | Home Cook</p>
-            <div className="mt-4 space-y-2 text-sm text-gray-600">
+            <h2 className="text-3xl font-semibold text-gray-800">{name}</h2>
+            <p className="text-gray-500 mt-2">Food Enthusiast | Home Cook</p>
+            <div className="mt-4 space-y-1 text-sm text-gray-600">
               <p><span className="font-semibold">Email:</span> {email}</p>
               <p><span className="font-semibold">Followers:</span> 120</p>
               <p><span className="font-semibold">Posts:</span> {posts.length}</p>
@@ -138,30 +141,30 @@ export default function Userprofile() {
           </div>
         </div>
 
-        {/* Buttons */}
-        <div className="flex justify-center gap-6 mt-8 mb-6">
+        {/* Action Buttons */}
+        <div className="flex flex-col md:flex-row justify-center gap-4 md:gap-8 mt-8 mb-10">
           <button
             onClick={() => navigate("/Post_add")}
-            className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold text-sm px-6 py-3 rounded-full transition-all shadow-md"
+            className="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-3 rounded-full shadow-md transition"
           >
-            Add New Post
+            ➕ Add New Post
           </button>
           <button
             onClick={() => navigate("/Post_views")}
-            className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold text-sm px-6 py-3 rounded-full transition-all shadow-md"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-full shadow-md transition"
           >
-            View Posts
+            📸 View Posts
           </button>
         </div>
 
         {/* Posts Section */}
-        <div className="px-8 pb-8">
+        <div className="px-6 pb-10">
           <h3 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Recent Posts</h3>
           {posts.length > 0 ? (
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {posts.map(post => (
-                <div key={post.id} className="bg-gray-50 p-6 rounded-xl shadow hover:shadow-md transition">
-                  <div className="w-full h-64 mb-4">
+                <div key={post.id} className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all border border-gray-200">
+                  <div className="w-full h-60 mb-4 rounded-xl overflow-hidden">
                     <Swiper
                       modules={[Navigation, Pagination]}
                       navigation
@@ -173,29 +176,28 @@ export default function Userprofile() {
                           <img
                             src={url}
                             alt="Post"
-                            className="w-full h-64 object-cover rounded-lg"
+                            className="w-full h-60 object-cover"
                           />
                         </SwiperSlide>
                       ))}
                     </Swiper>
                   </div>
-                  <h4 className="font-bold text-lg text-gray-800 mb-2">{post.description}</h4>
-                  <p className="text-gray-600 text-sm">❤️ {post.likes} Likes</p>
-{post.likedBy && post.likedBy.length > 0 && (
-  <p className="text-xs text-gray-500 mt-1">
-    Liked by: {post.likedBy.map((email, index) => (
-      <span key={index}>
-        {email.split('@')[0]}{index < post.likedBy.length - 1 ? ', ' : ''}
-      </span>
-    ))}
-  </p>
-)}
-
+                  <h4 className="font-semibold text-lg text-gray-800 mb-1">{post.description}</h4>
+                  <p className="text-gray-500 text-sm">❤️ {post.likes} Likes</p>
+                  {post.likedBy && post.likedBy.length > 0 && (
+                    <p className="text-xs text-gray-400 mt-1">
+                      Liked by: {post.likedBy.map((email, index) => (
+                        <span key={index}>
+                          {email.split('@')[0]}{index < post.likedBy.length - 1 ? ', ' : ''}
+                        </span>
+                      ))}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 text-center">You haven't posted anything yet.</p>
+            <p className="text-gray-500 text-center py-10">You haven't posted anything yet.</p>
           )}
         </div>
 

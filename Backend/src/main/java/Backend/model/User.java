@@ -9,7 +9,8 @@ public class User {
     private String id;
     private String email;
     private String password;
-    private String profileImage; // NEW FIELD
+    private String profileImage;
+    private String coverImage;
 
     // Constructors
     public User() {}
@@ -30,4 +31,12 @@ public class User {
 
     public String getProfileImage() { return profileImage; }
     public void setProfileImage(String profileImage) { this.profileImage = profileImage; }
+
+    public String getCoverImage() {
+        return coverImage;
+    }
+    
+    public void setCoverImage(String coverImage) {
+        this.coverImage = coverImage;
+    }
 }

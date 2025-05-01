@@ -150,4 +150,19 @@ public ResponseEntity<?> updatePost(@PathVariable String id,
     return ResponseEntity.ok(savedPost);
 }
 
+
+
+@DeleteMapping("/delete/{id}")
+public ResponseEntity<?> deletePost(@PathVariable String id) {
+    System.out.println("Received delete request for ID: " + id);
+    if (!postRepository.existsById(id)) {
+        System.out.println("Post not found with ID: " + id);
+        return ResponseEntity.notFound().build();
+    }
+    postRepository.deleteById(id);
+    return ResponseEntity.ok("Post deleted successfully");
+}
+
+
+
 }
