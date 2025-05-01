@@ -37,23 +37,36 @@ export default function Add_New_Recipes() {
     formData.append('ingredients', JSON.stringify(ingredients));
     formData.append('methodSteps', JSON.stringify(methodSteps));
     if (videoFile) formData.append('video', videoFile);
-
+  
+    // Debugging the formData content before sending
+    console.log('Form Data:', formData);
+  
     try {
       const response = await axios.post('http://localhost:8080/learn/add', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      alert(response.data);
+  
+      if (response.status === 200) {
+        alert(response.data); // Success message
+      } else {
+        alert('Failed to add recipe. ' + (response.data || 'Unknown error'));
+      }
+  
+      // Reset form fields after successful submission
       setRecipeName('');
       setIngredients([]);
       setMethodSteps(['']);
       setVideoFile(null);
     } catch (err) {
-      console.error(err);
-      alert('Failed to add recipe.');
+      console.error("Error:", err);
+      alert('Failed to add recipe. ' + (err.response?.data || 'Unknown error'));
     }
   };
+  
+
+
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white rounded shadow mt-10">

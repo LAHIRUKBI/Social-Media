@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,32 +35,43 @@ public class LearController {
             @RequestParam(value = "video", required = false) MultipartFile videoFile
     ) {
         try {
+            // Log incoming data
+            System.out.println("Received recipeName: " + recipeName);
+            System.out.println("Received ingredients: " + ingredientsJson);
+            System.out.println("Received methodSteps: " + stepsJson);
+    
             LearModel recipe = new LearModel();
             recipe.setRecipeName(recipeName);
-
+    
             // Parse JSON strings to List
-            List<String> ingredients = List.of(ingredientsJson.replace("[", "").replace("]", "").replace("\"", "").split(","));
-            List<String> methodSteps = List.of(stepsJson.replace("[", "").replace("]", "").replace("\"", "").split(","));
-
+            List<String> ingredients = new ObjectMapper().readValue(ingredientsJson, List.class);
+            List<String> methodSteps = new ObjectMapper().readValue(stepsJson, List.class);
+    
             recipe.setIngredients(ingredients);
             recipe.setMethodSteps(methodSteps);
-
+    
             // Handle file upload
             if (videoFile != null && !videoFile.isEmpty()) {
                 String uniqueFileName = UUID.randomUUID() + "_" + videoFile.getOriginalFilename();
                 String filePath = uploadDir + File.separator + uniqueFileName;
-                videoFile.transferTo(new File(filePath));
+                File uploadFile = new File(filePath);
+    
+                // Log file upload details for debugging
+                System.out.println("Uploading file to: " + filePath);
+                videoFile.transferTo(uploadFile);
+    
                 recipe.setVideoPath("/uploads/" + uniqueFileName);
             }
-
+    
             learRepository.save(recipe);
             return ResponseEntity.ok("Recipe added successfully!");
         } catch (IOException e) {
             e.printStackTrace();
-            return ResponseEntity.status(500).body("Error uploading video");
+            return ResponseEntity.status(500).body("Error uploading video: " + e.getMessage());
         } catch (Exception ex) {
             ex.printStackTrace();
-            return ResponseEntity.status(500).body("Failed to add recipe");
+            return ResponseEntity.status(500).body("Failed to add recipe due to error: " + ex.getMessage());
         }
     }
+    
 }
