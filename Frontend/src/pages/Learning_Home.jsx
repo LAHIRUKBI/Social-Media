@@ -19,13 +19,15 @@ export default function Learning_Home() {
         {/* Features Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
           {/* Learn Recipes */}
-          <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:scale-105">
-            <FaUtensils className="text-6xl text-orange-500 mb-6 mx-auto" />
-            <h2 className="text-2xl font-semibold text-orange-600 mb-4">Learn New Recipes</h2>
-            <p className="text-gray-600">
-              Access step-by-step guides and videos to cook delicious dishes from around the world.
-            </p>
-          </div>
+<Link to="/Learn_New_Recipes">
+  <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:scale-105 cursor-pointer">
+    <FaUtensils className="text-6xl text-orange-500 mb-6 mx-auto" />
+    <h2 className="text-2xl font-semibold text-orange-600 mb-4">Learn New Recipes</h2>
+    <p className="text-gray-600">
+      Access step-by-step guides and videos to cook delicious dishes from around the world.
+    </p>
+  </div>
+</Link>
 
           {/* Share Recipes */}
           <Link to="/Learning_add">
