@@ -130,7 +130,7 @@ export default function Add_New_Recipes() {
       <button
         onClick={handleSubmit}
         className="bg-green-600 text-white px-6 py-2 rounded"
-      >Add To Learn</button>
+      >Add To Learns</button>
     </div>
   );
 }
