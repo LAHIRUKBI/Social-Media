@@ -75,7 +75,17 @@ public class LearController {
     }
 
 
-
+    @GetMapping
+    public ResponseEntity<List<LearModel>> getAllRecipes() {
+        try {
+            List<LearModel> recipes = learRepository.findAll();
+            return ResponseEntity.ok(recipes);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+    
     
     
 }
