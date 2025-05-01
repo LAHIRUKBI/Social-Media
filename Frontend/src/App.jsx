@@ -17,6 +17,7 @@ import Learn_New_Recipes from './pages/Learn_New_Recipes';
 import Footer from './Components/Footer';
 import About_us from './pages/About_us';
 import Add_New_Recipes from './pages/Add_New_Recipes';
+import View_Learn_Recipe from './pages/View_Learn_Recipe';
 
 export default function App() {
   return (
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="/Learn_New_Recipes" element={<Learn_New_Recipes />} />
         <Route path="/About_us" element={<About_us />} />
         <Route path="/Add_New_Recipes" element={<Add_New_Recipes />} />
+        <Route path="/View_Learn_Recipe" element={<View_Learn_Recipe />} />
 
 
 
