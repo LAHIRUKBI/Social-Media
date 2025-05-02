@@ -46,7 +46,7 @@ export default function Update_Learn_Recipe() {
     if (newVideo) {
       formData.append('video', newVideo);
     } else {
-      formData.append('videoPath', recipe.videoPath); // Pass existing path if no new video
+      formData.append('videoPath', recipe.videoPath);
     }
 
     try {
@@ -63,64 +63,74 @@ export default function Update_Learn_Recipe() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-10">
-      <h2 className="text-2xl font-bold mb-6">Update Recipe</h2>
+    <div className="max-w-4xl mx-auto px-6 py-12 bg-white shadow-lg rounded-lg mt-10 mb-10">
+      <h2 className="text-3xl font-bold text-center mb-8 text-green-700">Update Recipe</h2>
 
-      <input
-        name="recipeName"
-        value={recipe.recipeName}
-        onChange={handleChange}
-        className="w-full p-2 border rounded mb-4"
-        placeholder="Recipe Name"
-      />
-
-      <h4 className="font-semibold mb-2">Ingredients</h4>
-      {recipe.ingredients.map((ing, i) => (
+      <div className="mb-6">
+        <label className="block font-semibold mb-1 text-gray-700">Recipe Name</label>
         <input
-          key={i}
-          value={ing}
-          onChange={(e) => handleArrayChange(i, e.target.value, 'ingredients')}
-          className="w-full p-2 border rounded mb-2"
+          name="recipeName"
+          value={recipe.recipeName}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+          placeholder="Enter recipe name"
         />
-      ))}
+      </div>
 
-      <h4 className="font-semibold mt-4 mb-2">Method Steps</h4>
-      {recipe.methodSteps.map((step, i) => (
-        <input
-          key={i}
-          value={step}
-          onChange={(e) => handleArrayChange(i, e.target.value, 'methodSteps')}
-          className="w-full p-2 border rounded mb-2"
-        />
-      ))}
+      <div className="mb-6">
+        <label className="block font-semibold mb-2 text-gray-700">Ingredients</label>
+        {recipe.ingredients.map((ing, i) => (
+          <input
+            key={i}
+            value={ing}
+            onChange={(e) => handleArrayChange(i, e.target.value, 'ingredients')}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md mb-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+            placeholder={`Ingredient ${i + 1}`}
+          />
+        ))}
+      </div>
 
-      {/* Video Preview */}
+      <div className="mb-6">
+        <label className="block font-semibold mb-2 text-gray-700">Method Steps</label>
+        {recipe.methodSteps.map((step, i) => (
+          <input
+            key={i}
+            value={step}
+            onChange={(e) => handleArrayChange(i, e.target.value, 'methodSteps')}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md mb-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+            placeholder={`Step ${i + 1}`}
+          />
+        ))}
+      </div>
+
       {recipe.videoPath && (
-        <div className="mt-4">
-          <h4 className="font-semibold mb-2">Current Video</h4>
-          <video controls className="w-full h-64 rounded mb-4">
+        <div className="mb-6">
+          <h4 className="font-semibold text-gray-700 mb-2">Current Video</h4>
+          <video controls className="w-full h-64 rounded-lg shadow">
             <source src={`http://localhost:8080${recipe.videoPath}`} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </div>
       )}
 
-      {/* Upload New Video */}
-      <div className="mb-4">
-        <label className="block mb-2 font-semibold">Upload New Video (optional)</label>
+      <div className="mb-8">
+        <label className="block font-semibold text-gray-700 mb-2">Upload New Video (optional)</label>
         <input
           type="file"
           accept="video/mp4"
           onChange={handleVideoChange}
+          className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-100 file:text-green-700 hover:file:bg-green-200"
         />
       </div>
 
-      <button
-        onClick={handleUpdate}
-        className="bg-green-600 text-white px-4 py-2 rounded mt-6 hover:bg-green-700 transition"
-      >
-        Update Recipe
-      </button>
+      <div className="text-center">
+        <button
+          onClick={handleUpdate}
+          className="bg-green-600 text-white font-semibold px-6 py-3 rounded-md hover:bg-green-700 transition duration-200"
+        >
+          Update Recipe
+        </button>
+      </div>
     </div>
   );
 }
