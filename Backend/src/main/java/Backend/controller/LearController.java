@@ -87,5 +87,18 @@ public class LearController {
     }
     
     
+
+
+    @DeleteMapping("/{id}")
+public ResponseEntity<String> deleteRecipe(@PathVariable String id) {
+    try {
+        learRepository.deleteById(id);
+        return ResponseEntity.ok("Recipe deleted successfully!");
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        return ResponseEntity.status(500).body("Error deleting recipe: " + ex.getMessage());
+    }
+}
+     
     
 }
