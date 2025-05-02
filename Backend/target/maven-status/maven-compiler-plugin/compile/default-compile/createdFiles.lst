@@ -1,3 +1,15 @@
-Backend\config\WebConfig.class
+Backend\model\RecipeModel.class
+Backend\controller\PostController.class
+Backend\model\Post$PostBuilder.class
+Backend\repository\UserRepository.class
+Backend\model\Post.class
+Backend\controller\RecipeController.class
+Backend\repository\RecipeRepository.class
 Backend\BackendApplication.class
+Backend\controller\UserController.class
+Backend\repository\LearRepository.class
+Backend\model\LearModel.class
+Backend\model\User.class
+Backend\repository\PostRepository.class
+Backend\config\WebConfig.class
 Backend\controller\LearController.class

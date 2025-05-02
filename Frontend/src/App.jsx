@@ -19,6 +19,7 @@ import About_us from './pages/About_us';
 import Add_New_Recipes from './pages/Add_New_Recipes';
 import View_Learn_Recipe from './pages/View_Learn_Recipe';
 import Update_Learn_Recipe from './pages/Update_Learn_Recipe';
+import Shorts from './pages/Shorts';
 
 export default function App() {
   return (
@@ -40,6 +41,7 @@ export default function App() {
         <Route path="/Add_New_Recipes" element={<Add_New_Recipes />} />
         <Route path="/View_Learn_Recipe" element={<View_Learn_Recipe />} />
         <Route path="/Update_Learn_Recipe/:id" element={<Update_Learn_Recipe />} />
+        <Route path="/Shorts" element={<Shorts />} />
 
 
 

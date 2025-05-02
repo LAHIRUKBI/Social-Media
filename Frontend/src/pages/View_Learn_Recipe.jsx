@@ -34,6 +34,25 @@ export default function View_Learn_Recipe() {
     navigate(`/Update_Learn_Recipe/${id}`);
   };
 
+  const getMimeTypeFromExtension = (videoPath) => {
+    const ext = videoPath.split('.').pop().toLowerCase();
+    switch (ext) {
+      case 'mp4':
+        return 'video/mp4';
+      case 'webm':
+        return 'video/webm';
+      case 'ogg':
+        return 'video/ogg';
+      case 'mov':
+        return 'video/quicktime';
+      case 'avi':
+        return 'video/x-msvideo';
+      default:
+        return 'video/mp4'; // fallback
+    }
+  };
+  
+
   return (
     <section className="max-w-7xl mx-auto px-6 mb-16">
       <h3 className="text-3xl font-bold mb-8 text-gray-800">🔥 Recipe Collection</h3>
@@ -81,15 +100,19 @@ export default function View_Learn_Recipe() {
               </div>
 
               {/* Video */}
-              {recipe.videoPath && (
-                <div className="mb-4">
-                  <h5 className="text-lg font-medium text-gray-800">Recipe Video</h5>
-                  <video controls className="w-full h-[350px] rounded-lg shadow-md">
-                    <source src={`http://localhost:8080${recipe.videoPath}`} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-                </div>
-              )}
+{recipe.videoPath && (
+  <div className="mb-4">
+    <h5 className="text-lg font-medium text-gray-800">Recipe Video</h5>
+    <video controls className="w-full h-[350px] rounded-lg shadow-md">
+      <source
+        src={`http://localhost:8080${recipe.videoPath}`}
+        type={getMimeTypeFromExtension(recipe.videoPath)}
+      />
+      Your browser does not support the video tag.
+    </video>
+  </div>
+)}
+
 
               {/* Like & Comment */}
               <div className="flex items-center justify-between mt-6 space-x-6">
