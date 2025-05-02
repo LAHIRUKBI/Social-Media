@@ -5,16 +5,34 @@ export default function View_Learn_Recipe() {
   const [recipes, setRecipes] = useState([]);
 
   useEffect(() => {
-    const fetchRecipes = async () => {
-      try {
-        const response = await axios.get('http://localhost:8080/learn');
-        setRecipes(response.data);
-      } catch (err) {
-        console.error('Error fetching recipes:', err);
-      }
-    };
     fetchRecipes();
   }, []);
+
+  const fetchRecipes = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/learn');
+      setRecipes(response.data);
+    } catch (err) {
+      console.error('Error fetching recipes:', err);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this recipe?')) return;
+
+    try {
+      await axios.delete(`http://localhost:8080/learn/${id}`);
+      setRecipes(recipes.filter(recipe => recipe.id !== id));
+    } catch (err) {
+      console.error('Error deleting recipe:', err);
+    }
+  };
+
+  const handleUpdate = (id) => {
+    // You can navigate to an update form using React Router
+    // Example: navigate(`/update-recipe/${id}`);
+    alert('Update functionality coming soon.'); // Placeholder
+  };
 
   return (
     <section className="max-w-7xl mx-auto px-6 mb-16">
@@ -40,12 +58,9 @@ export default function View_Learn_Recipe() {
                 />
               )}
 
-              {/* Recipe Name */}
-              <h4 className="text-xl font-semibold text-gray-900 mb-1">
-                {recipe.recipeName}
-              </h4>
+              <h4 className="text-xl font-semibold text-gray-900 mb-1">{recipe.recipeName}</h4>
 
-              {/* Recipe Ingredients */}
+              {/* Ingredients */}
               <div className="mb-4">
                 <h5 className="text-lg font-medium text-gray-800">Ingredients</h5>
                 <ul className="list-disc list-inside ml-6 text-sm text-gray-600">
@@ -55,7 +70,7 @@ export default function View_Learn_Recipe() {
                 </ul>
               </div>
 
-              {/* Recipe Method Steps */}
+              {/* Method */}
               <div className="mb-4">
                 <h5 className="text-lg font-medium text-gray-800">Method Steps</h5>
                 <ol className="list-decimal list-inside ml-6 text-sm text-gray-600">
@@ -65,32 +80,42 @@ export default function View_Learn_Recipe() {
                 </ol>
               </div>
 
-              {/* Recipe Video */}
+              {/* Video */}
               {recipe.videoPath && (
                 <div className="mb-4">
                   <h5 className="text-lg font-medium text-gray-800">Recipe Video</h5>
-                  <div className="relative mb-4">
-                    <video controls className="w-full h-[350px] rounded-lg shadow-md hover:opacity-90 transition-opacity">
-                      <source src={`http://localhost:8080${recipe.videoPath}`} type="video/mp4" />
-                      Your browser does not support the video tag.
-                    </video>
-                  </div>
+                  <video controls className="w-full h-[350px] rounded-lg shadow-md">
+                    <source src={`http://localhost:8080${recipe.videoPath}`} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
                 </div>
               )}
 
-              {/* Like & Comment Buttons */}
+              {/* Like & Comment */}
               <div className="flex items-center justify-between mt-6 space-x-6">
-                <button className="text-orange-500 hover:underline font-medium">
-                  👍 Like
-                </button>
-                <button className="text-blue-500 hover:underline font-medium">
-                  💬 Comment
-                </button>
+                <button className="text-orange-500 hover:underline font-medium">👍 Like</button>
+                <button className="text-blue-500 hover:underline font-medium">💬 Comment</button>
               </div>
 
               {/* Likes */}
               <div className="border-t mt-4 pt-4 text-center text-sm text-gray-500">
                 <span>❤️ {recipe.likes} Likes</span>
+              </div>
+
+              {/* Delete & Update Buttons */}
+              <div className="flex justify-between mt-6">
+                <button
+                  onClick={() => handleDelete(recipe.id)}
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => handleUpdate(recipe.id)}
+                  className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition"
+                >
+                  Update
+                </button>
               </div>
             </div>
           ))}
