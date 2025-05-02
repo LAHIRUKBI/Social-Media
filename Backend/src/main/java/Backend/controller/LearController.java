@@ -103,16 +103,47 @@ public ResponseEntity<String> deleteRecipe(@PathVariable String id) {
 
 
 @PutMapping("/{id}")
-public ResponseEntity<String> updateRecipe(@PathVariable String id, @RequestBody LearModel updatedRecipe) {
-    return learRepository.findById(id).map(recipe -> {
-        recipe.setRecipeName(updatedRecipe.getRecipeName());
-        recipe.setIngredients(updatedRecipe.getIngredients());
-        recipe.setMethodSteps(updatedRecipe.getMethodSteps());
-        recipe.setVideoPath(updatedRecipe.getVideoPath());
-        learRepository.save(recipe);
+public ResponseEntity<String> updateRecipe(
+        @PathVariable String id,
+        @RequestParam("recipeName") String recipeName,
+        @RequestParam("ingredients") String ingredientsJson,
+        @RequestParam("methodSteps") String stepsJson,
+        @RequestParam(value = "video", required = false) MultipartFile videoFile,
+        @RequestParam(value = "videoPath", required = false) String existingVideoPath
+) {
+    try {
+        LearModel existing = learRepository.findById(id).orElse(null);
+        if (existing == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        existing.setRecipeName(recipeName);
+        List<String> ingredients = new ObjectMapper().readValue(ingredientsJson, List.class);
+        List<String> methodSteps = new ObjectMapper().readValue(stepsJson, List.class);
+        existing.setIngredients(ingredients);
+        existing.setMethodSteps(methodSteps);
+
+        if (videoFile != null && !videoFile.isEmpty()) {
+            String uniqueFileName = UUID.randomUUID() + "_" + videoFile.getOriginalFilename();
+            String filePath = uploadDir + File.separator + uniqueFileName;
+            File uploadFile = new File(filePath);
+            videoFile.transferTo(uploadFile);
+            existing.setVideoPath("/uploads/" + uniqueFileName);
+        } else if (existingVideoPath != null) {
+            existing.setVideoPath(existingVideoPath); // Retain old path if no new video
+        }
+
+        learRepository.save(existing);
         return ResponseEntity.ok("Recipe updated successfully!");
-    }).orElse(ResponseEntity.notFound().build());
+    } catch (IOException e) {
+        e.printStackTrace();
+        return ResponseEntity.status(500).body("Video upload error: " + e.getMessage());
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        return ResponseEntity.status(500).body("Error: " + ex.getMessage());
+    }
 }
+
 
      
     
