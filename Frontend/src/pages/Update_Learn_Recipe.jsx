@@ -12,6 +12,7 @@ export default function Update_Learn_Recipe() {
     methodSteps: [],
     videoPath: ''
   });
+  const [newVideo, setNewVideo] = useState(null);
 
   useEffect(() => {
     axios.get(`http://localhost:8080/learn`)
@@ -32,9 +33,28 @@ export default function Update_Learn_Recipe() {
     setRecipe({ ...recipe, [field]: updated });
   };
 
+  const handleVideoChange = (e) => {
+    setNewVideo(e.target.files[0]);
+  };
+
   const handleUpdate = async () => {
+    const formData = new FormData();
+    formData.append('recipeName', recipe.recipeName);
+    formData.append('ingredients', JSON.stringify(recipe.ingredients));
+    formData.append('methodSteps', JSON.stringify(recipe.methodSteps));
+
+    if (newVideo) {
+      formData.append('video', newVideo);
+    } else {
+      formData.append('videoPath', recipe.videoPath); // Pass existing path if no new video
+    }
+
     try {
-      await axios.put(`http://localhost:8080/learn/${id}`, recipe);
+      await axios.put(`http://localhost:8080/learn/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       alert('Recipe updated!');
       navigate('/View_Learn_Recipe');
     } catch (err) {
@@ -73,6 +93,27 @@ export default function Update_Learn_Recipe() {
           className="w-full p-2 border rounded mb-2"
         />
       ))}
+
+      {/* Video Preview */}
+      {recipe.videoPath && (
+        <div className="mt-4">
+          <h4 className="font-semibold mb-2">Current Video</h4>
+          <video controls className="w-full h-64 rounded mb-4">
+            <source src={`http://localhost:8080${recipe.videoPath}`} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      )}
+
+      {/* Upload New Video */}
+      <div className="mb-4">
+        <label className="block mb-2 font-semibold">Upload New Video (optional)</label>
+        <input
+          type="file"
+          accept="video/mp4"
+          onChange={handleVideoChange}
+        />
+      </div>
 
       <button
         onClick={handleUpdate}
