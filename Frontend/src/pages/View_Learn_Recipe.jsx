@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function View_Learn_Recipe() {
   const [recipes, setRecipes] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchRecipes();
@@ -29,9 +31,7 @@ export default function View_Learn_Recipe() {
   };
 
   const handleUpdate = (id) => {
-    // You can navigate to an update form using React Router
-    // Example: navigate(`/update-recipe/${id}`);
-    alert('Update functionality coming soon.'); // Placeholder
+    navigate(`/Update_Learn_Recipe/${id}`);
   };
 
   return (
