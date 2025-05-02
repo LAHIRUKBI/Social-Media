@@ -9,7 +9,7 @@ export default function Footer() {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    if (password === '22160102') {
+    if (password === '123') {
       navigate('/Add_New_Recipes');
     } else {
       setError('Incorrect password');
