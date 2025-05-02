@@ -99,6 +99,21 @@ public ResponseEntity<String> deleteRecipe(@PathVariable String id) {
         return ResponseEntity.status(500).body("Error deleting recipe: " + ex.getMessage());
     }
 }
+
+
+
+@PutMapping("/{id}")
+public ResponseEntity<String> updateRecipe(@PathVariable String id, @RequestBody LearModel updatedRecipe) {
+    return learRepository.findById(id).map(recipe -> {
+        recipe.setRecipeName(updatedRecipe.getRecipeName());
+        recipe.setIngredients(updatedRecipe.getIngredients());
+        recipe.setMethodSteps(updatedRecipe.getMethodSteps());
+        recipe.setVideoPath(updatedRecipe.getVideoPath());
+        learRepository.save(recipe);
+        return ResponseEntity.ok("Recipe updated successfully!");
+    }).orElse(ResponseEntity.notFound().build());
+}
+
      
     
 }
