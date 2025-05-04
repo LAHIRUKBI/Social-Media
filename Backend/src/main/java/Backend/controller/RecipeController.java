@@ -76,4 +76,52 @@ public ResponseEntity<?> getAllRecipes() {
 }
 
 
+
+@PutMapping("/{id}")
+public ResponseEntity<String> updateRecipe(
+        @PathVariable String id,
+        @RequestParam("title") String title,
+        @RequestParam("ingredients") String ingredients,
+        @RequestParam("instructions") String instructions,
+        @RequestParam(value = "image", required = false) MultipartFile image
+) {
+    try {
+        RecipeModel existing = recipeRepository.findById(id).orElse(null);
+        if (existing == null) return ResponseEntity.status(404).body("Recipe not found");
+
+        existing.setTitle(title);
+        existing.setIngredients(ingredients);
+        existing.setInstructions(instructions);
+
+        if (image != null && !image.isEmpty()) {
+            String fileName = StringUtils.cleanPath(image.getOriginalFilename());
+            String uploadPath = uploadDir + File.separator + fileName;
+            Files.createDirectories(Paths.get(uploadDir));
+            image.transferTo(new File(uploadPath));
+            existing.setImageUrl("/uploads/" + fileName);
+        }
+
+        recipeRepository.save(existing);
+        return ResponseEntity.ok("Recipe updated successfully!");
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(500).body("Update failed");
+    }
+}
+
+
+@DeleteMapping("/{id}")
+public ResponseEntity<String> deleteRecipe(@PathVariable String id) {
+    System.out.println("Attempting to delete recipe with ID: " + id); // DEBUG
+    try {
+        recipeRepository.deleteById(id);
+        return ResponseEntity.ok("Recipe deleted successfully!");
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(500).body("Failed to delete recipe!");
+    }
+}
+
+
+
 }
