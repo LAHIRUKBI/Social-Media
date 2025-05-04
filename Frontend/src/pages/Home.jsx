@@ -156,7 +156,6 @@ export default function Home() {
       {/* All Recipes */}
       <section className="max-w-7xl mx-auto px-6 mb-16">
         <h3 className="text-2xl font-semibold mb-6 text-gray-700">🌍 All Recipes</h3>
-
         {allRecipes.length === 0 ? (
           <p className="text-lg text-center text-gray-600">No recipes available yet.</p>
         ) : (
@@ -170,6 +169,9 @@ export default function Home() {
                     className="rounded-md mb-4 h-48 w-full object-cover"
                   />
                 )}
+                 <p className="text-sm text-gray-500 mb-1">
+    👨‍🍳 <span className="italic">{recipe.email?.split('@')[0]}'s Recipe</span>
+  </p>
                 <h4 className="text-lg font-semibold text-orange-500 mb-3">{recipe.title}</h4>
                 <h5 className="text-md font-medium text-gray-700 mb-2">Ingredients:</h5>
                 <p className="text-gray-600 mb-3">{recipe.ingredients}</p>
