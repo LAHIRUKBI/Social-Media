@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-
 export default function Update_share_recipe() {
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -22,7 +21,7 @@ export default function Update_share_recipe() {
     try {
       await axios.put(`http://localhost:8080/api/recipes/${state.recipe.id}`, formData);
       alert("Recipe updated successfully!");
-      navigate('/Learnig_share_recipe'); // Navigate back
+      navigate('/Learnig_share_recipe');
     } catch (error) {
       console.error("Update failed", error);
       alert("Failed to update recipe");
@@ -30,41 +29,64 @@ export default function Update_share_recipe() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-100 p-6">
-      <div className="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow">
-        <h2 className="text-2xl font-bold text-center text-orange-500 mb-4">Update Recipe</h2>
-        
-        <input
-          type="text"
-          className="w-full border p-2 rounded mb-4"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Title"
-        />
-        <textarea
-          className="w-full border p-2 rounded mb-4"
-          value={ingredients}
-          onChange={(e) => setIngredients(e.target.value)}
-          placeholder="Ingredients"
-        />
-        <textarea
-          className="w-full border p-2 rounded mb-4"
-          value={instructions}
-          onChange={(e) => setInstructions(e.target.value)}
-          placeholder="Instructions"
-        />
-        <input
-          type="file"
-          className="mb-4"
-          onChange={(e) => setImage(e.target.files[0])}
-        />
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-6">
+      <div className="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-10 transition-all duration-300 hover:shadow-2xl">
+        <h2 className="text-3xl font-extrabold text-center text-orange-600 mb-8">
+          Update Your Recipe
+        </h2>
 
-        <button
-          onClick={handleUpdate}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full"
-        >
-          Update Recipe
-        </button>
+        <div className="space-y-6">
+          <div>
+            <label className="block text-gray-700 font-semibold mb-1">Title</label>
+            <input
+              type="text"
+              className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-orange-400"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter recipe title"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-semibold mb-1">Ingredients</label>
+            <textarea
+              className="w-full border border-gray-300 rounded-md p-3 h-28 resize-none focus:outline-none focus:ring-2 focus:ring-orange-400"
+              value={ingredients}
+              onChange={(e) => setIngredients(e.target.value)}
+              placeholder="List ingredients..."
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-semibold mb-1">Instructions</label>
+            <textarea
+              className="w-full border border-gray-300 rounded-md p-3 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-orange-400"
+              value={instructions}
+              onChange={(e) => setInstructions(e.target.value)}
+              placeholder="Write cooking steps..."
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-semibold mb-1">Upload New Image</label>
+            <input
+              type="file"
+              className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
+              file:rounded-full file:border-0
+              file:text-sm file:font-semibold
+              file:bg-orange-100 file:text-orange-600
+              hover:file:bg-orange-200"
+              onChange={(e) => setImage(e.target.files[0])}
+            />
+          </div>
+
+          <button
+            onClick={handleUpdate}
+            className="mt-6 w-full bg-orange-500 text-white font-semibold py-3 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200"
+          >
+            Save Changes
+          </button>
+        </div>
       </div>
     </div>
   );
