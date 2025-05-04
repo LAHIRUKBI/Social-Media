@@ -20,7 +20,7 @@ export default function Update_share_recipe() {
     if (image) formData.append("image", image);
 
     try {
-      await axios.put(`http://localhost:8080/api/recipes/${state.recipe._id}`, formData);
+      await axios.put(`http://localhost:8080/api/recipes/${state.recipe.id}`, formData);
       alert("Recipe updated successfully!");
       navigate('/Learnig_share_recipe'); // Navigate back
     } catch (error) {
