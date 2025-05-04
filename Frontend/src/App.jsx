@@ -20,6 +20,7 @@ import Add_New_Recipes from './pages/Add_New_Recipes';
 import View_Learn_Recipe from './pages/View_Learn_Recipe';
 import Update_Learn_Recipe from './pages/Update_Learn_Recipe';
 import Shorts from './pages/Shorts';
+import Update_share_recipe from './pages/Update_share_recipe';
 
 export default function App() {
   return (
@@ -42,6 +43,7 @@ export default function App() {
         <Route path="/View_Learn_Recipe" element={<View_Learn_Recipe />} />
         <Route path="/Update_Learn_Recipe/:id" element={<Update_Learn_Recipe />} />
         <Route path="/Shorts" element={<Shorts />} />
+        <Route path="/Update_share_recipe" element={<Update_share_recipe />} />
 
 
 
