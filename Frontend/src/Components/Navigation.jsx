@@ -12,7 +12,11 @@ export default function Navigation() {
         .then(res => {
           if (res.data.profileImage) {
             setProfileImage(`http://localhost:8080/${res.data.profileImage}`);
+          } else {
+            // Set a default profile image
+            setProfileImage("https://www.w3schools.com/howto/img_avatar.png");
           }
+          
         })
         .catch(err => {
           console.error("Failed to fetch profile image:", err);
@@ -68,21 +72,22 @@ export default function Navigation() {
           </Link>
 
           {profileImage ? (
-            <Link to="/Userprofile">
-              <img
-                src={profileImage}
-                alt="Profile"
-                className="w-10 h-10 rounded-full object-cover border-2 border-red-500 hover:scale-105 transition-transform duration-300"
-              />
-            </Link>
-          ) : (
-            <Link
-              to="/sign"
-              className="bg-red-500 text-white px-5 py-2 rounded-full shadow-md hover:bg-red-600 transition duration-300"
-            >
-              Sign In
-            </Link>
-          )}
+  <Link to="/Userprofile">
+    <img
+      src={profileImage}
+      alt="Profile"
+      className="w-10 h-10 rounded-full object-cover border-2 border-red-500 hover:scale-105 transition-transform duration-300"
+    />
+  </Link>
+) : (
+  <Link
+    to="/sign"
+    className="bg-red-500 text-white px-5 py-2 rounded-full shadow-md hover:bg-red-600 transition duration-300"
+  >
+    Sign In
+  </Link>
+)}
+
         </div>
       </div>
     </nav>
