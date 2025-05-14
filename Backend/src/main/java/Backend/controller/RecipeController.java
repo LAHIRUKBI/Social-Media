@@ -116,6 +116,11 @@ public ResponseEntity<String> updateRecipe(
 public ResponseEntity<String> deleteRecipe(@PathVariable String id) {
     System.out.println("Attempting to delete recipe with ID: " + id); // DEBUG
     try {
+        // Check if recipe exists first
+        if (!recipeRepository.existsById(id)) {
+            return ResponseEntity.status(404).body("Recipe not found");
+        }
+        
         recipeRepository.deleteById(id);
         return ResponseEntity.ok("Recipe deleted successfully!");
     } catch (Exception e) {
