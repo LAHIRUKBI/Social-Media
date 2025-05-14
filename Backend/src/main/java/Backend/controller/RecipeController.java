@@ -25,35 +25,37 @@ public class RecipeController {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
-    @PostMapping("/add")
-    public ResponseEntity<String> addRecipe(
-            @RequestParam("title") String title,
-            @RequestParam("ingredients") String ingredients,
-            @RequestParam("instructions") String instructions,
-            @RequestParam(value = "image", required = false) MultipartFile image,
-            @RequestParam("email") String email // 🔥 NEW PARAMETER
-    ) {
-        String imageUrl = null;
+    // Update the addRecipe method to include new fields
+@PostMapping("/add")
+public ResponseEntity<String> addRecipe(
+        @RequestParam("title") String title,
+        @RequestParam("ingredients") String ingredients,
+        @RequestParam("instructions") String instructions,
+        @RequestParam(value = "image", required = false) MultipartFile image,
+        @RequestParam("email") String email,
+        @RequestParam(value = "cookingTime", required = false) String cookingTime,
+        @RequestParam(value = "difficulty", required = false) String difficulty
+) {
+    String imageUrl = null;
     
-        if (image != null && !image.isEmpty()) {
-            try {
-                String fileName = StringUtils.cleanPath(image.getOriginalFilename());
-                String uploadPath = uploadDir + File.separator + fileName;
-                Files.createDirectories(Paths.get(uploadDir));
-                image.transferTo(new File(uploadPath));
-                imageUrl = "/uploads/" + fileName;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return ResponseEntity.status(500).body("Image upload failed!");
-            }
+    if (image != null && !image.isEmpty()) {
+        try {
+            String fileName = StringUtils.cleanPath(image.getOriginalFilename());
+            String uploadPath = uploadDir + File.separator + fileName;
+            Files.createDirectories(Paths.get(uploadDir));
+            image.transferTo(new File(uploadPath));
+            imageUrl = "/uploads/" + fileName;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Image upload failed!");
         }
-    
-        // Save the recipe along with email
-        RecipeModel recipe = new RecipeModel(title, ingredients, instructions, imageUrl, email);
-        recipeRepository.save(recipe);
-    
-        return ResponseEntity.ok("Recipe added successfully!");
     }
+    
+    RecipeModel recipe = new RecipeModel(title, ingredients, instructions, imageUrl, email, cookingTime, difficulty);
+    recipeRepository.save(recipe);
+    
+    return ResponseEntity.ok("Recipe added successfully!");
+}
 
 
     @GetMapping("/user")
