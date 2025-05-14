@@ -25,7 +25,8 @@ public class RecipeController {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
-    // Update the addRecipe method to include new fields
+
+
 @PostMapping("/add")
 public ResponseEntity<String> addRecipe(
         @RequestParam("title") String title,
@@ -58,7 +59,7 @@ public ResponseEntity<String> addRecipe(
 }
 
 
-    @GetMapping("/user")
+@GetMapping("/user")
 public ResponseEntity<?> getRecipesByUser(@RequestParam String email) {
     try {
         return ResponseEntity.ok(recipeRepository.findByEmail(email));
@@ -85,7 +86,11 @@ public ResponseEntity<String> updateRecipe(
         @RequestParam("title") String title,
         @RequestParam("ingredients") String ingredients,
         @RequestParam("instructions") String instructions,
-        @RequestParam(value = "image", required = false) MultipartFile image
+        @RequestParam("email") String email,
+        @RequestParam("cookingTime") String cookingTime,
+        @RequestParam("difficulty") String difficulty,
+        @RequestParam(value = "image", required = false) MultipartFile image,
+        @RequestParam(value = "imageUrl", required = false) String imageUrl
 ) {
     try {
         RecipeModel existing = recipeRepository.findById(id).orElse(null);
@@ -94,6 +99,9 @@ public ResponseEntity<String> updateRecipe(
         existing.setTitle(title);
         existing.setIngredients(ingredients);
         existing.setInstructions(instructions);
+        existing.setEmail(email);
+        existing.setCookingTime(cookingTime);
+        existing.setDifficulty(difficulty);
 
         if (image != null && !image.isEmpty()) {
             String fileName = StringUtils.cleanPath(image.getOriginalFilename());
@@ -101,13 +109,15 @@ public ResponseEntity<String> updateRecipe(
             Files.createDirectories(Paths.get(uploadDir));
             image.transferTo(new File(uploadPath));
             existing.setImageUrl("/uploads/" + fileName);
+        } else if (imageUrl != null) {
+            existing.setImageUrl(imageUrl);
         }
 
         recipeRepository.save(existing);
         return ResponseEntity.ok("Recipe updated successfully!");
     } catch (Exception e) {
         e.printStackTrace();
-        return ResponseEntity.status(500).body("Update failed");
+        return ResponseEntity.status(500).body("Update failed: " + e.getMessage());
     }
 }
 
