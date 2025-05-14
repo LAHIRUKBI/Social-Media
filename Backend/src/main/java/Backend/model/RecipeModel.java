@@ -14,19 +14,39 @@ public class RecipeModel {
     private String instructions;
     private String imageUrl;
     private String email;
+    private String cookingTime;
+    private String difficulty;
 
     public RecipeModel() {
     }
 
-    public RecipeModel(String title, String ingredients, String instructions, String imageUrl, String email) {
+    public RecipeModel(String title, String ingredients, String instructions, String imageUrl, String email, String cookingTime, String difficulty) {
         this.title = title;
         this.ingredients = ingredients;
         this.instructions = instructions;
         this.imageUrl = imageUrl;
         this.email = email;
+        this.cookingTime = cookingTime;
+        this.difficulty = difficulty;
     }
 
     // Getters and Setters
+
+    public String getCookingTime() {
+        return cookingTime;
+    }
+
+    public void setCookingTime(String cookingTime) {
+        this.cookingTime = cookingTime;
+    }
+
+    public String getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(String difficulty) {
+        this.difficulty = difficulty;
+    }
 
     public String getId() {
         return id;
