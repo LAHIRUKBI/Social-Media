@@ -22,7 +22,7 @@ export default function Home() {
 
     const fetchAllRecipes = async () => {
       try {
-        const res = await axios.get('http://localhost:8080/api/recipes/all'); // <-- Fetch all recipes
+        const res = await axios.get('http://localhost:8080/api/recipes/all');
         setAllRecipes(res.data.reverse()); // newest first
       } catch (error) {
         console.error('Error fetching all recipes:', error);
@@ -61,12 +61,20 @@ export default function Home() {
     );
   };
 
-  const handleLikeRecipe = (recipeId) => {
-    setAllRecipes(prevRecipes =>
-      prevRecipes.map(recipe =>
-        recipe._id === recipeId ? { ...recipe, likes: (recipe.likes || 0) + 1 } : recipe
-      )
-    );
+  const handleLikeRecipe = async (recipeId) => {
+    try {
+      const res = await axios.put(`http://localhost:8080/api/recipes/like/${recipeId}`, null, {
+        params: { userEmail: email },
+      });
+      const updatedRecipe = res.data;
+      setAllRecipes(prevRecipes =>
+        prevRecipes.map(recipe =>
+          recipe._id === recipeId ? updatedRecipe : recipe
+        )
+      );
+    } catch (error) {
+      console.error("Error liking recipe:", error);
+    }
   };
 
   const handleCommentRecipe = (recipeId, comment) => {
@@ -75,6 +83,30 @@ export default function Home() {
         recipe._id === recipeId ? { ...recipe, comments: [...(recipe.comments || []), comment] } : recipe
       )
     );
+  };
+
+  const formatIngredients = (ingredients) => {
+    try {
+      const parsed = JSON.parse(ingredients);
+      if (Array.isArray(parsed)) {
+        return parsed.slice(0, 3).map(ing => `${ing.name}`).join(', ');
+      }
+      return ingredients;
+    } catch {
+      return ingredients.length > 50 ? ingredients.substring(0, 50) + '...' : ingredients;
+    }
+  };
+
+  const formatInstructions = (instructions) => {
+    try {
+      const parsed = JSON.parse(instructions);
+      if (Array.isArray(parsed)) {
+        return parsed[0].length > 50 ? parsed[0].substring(0, 50) + '...' : parsed[0];
+      }
+      return instructions.length > 50 ? instructions.substring(0, 50) + '...' : instructions;
+    } catch {
+      return instructions.length > 50 ? instructions.substring(0, 50) + '...' : instructions;
+    }
   };
 
   return (
@@ -155,60 +187,77 @@ export default function Home() {
 
       {/* All Recipes */}
       <section className="max-w-7xl mx-auto px-6 mb-16">
-        <h3 className="text-2xl font-semibold mb-6 text-gray-700">🌍 All Recipes</h3>
+        <h3 className="text-3xl font-bold mb-8 text-gray-800">🍽️ All Recipes</h3>
         {allRecipes.length === 0 ? (
           <p className="text-lg text-center text-gray-600">No recipes available yet.</p>
         ) : (
-          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {allRecipes.map((recipe) => (
-              <div key={recipe._id} className="bg-white rounded-xl shadow-md p-4 border border-gray-200 hover:shadow-lg transition-transform hover:scale-105">
+              <div 
+                key={recipe._id} 
+                className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition-all hover:-translate-y-1"
+              >
                 {recipe.imageUrl && (
-                  <img
-                    src={`http://localhost:8080${recipe.imageUrl}`}
-                    alt={recipe.title}
-                    className="rounded-md mb-3 h-40 w-full object-cover"
-                  />
+                  <div className="relative h-40 overflow-hidden">
+                    <img
+                      src={`http://localhost:8080${recipe.imageUrl}`}
+                      alt={recipe.title}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute bottom-2 right-2 bg-white/80 rounded-full px-2 py-1 text-xs font-medium text-orange-600">
+                      ⏱️ {recipe.cookingTime || 'N/A'}
+                    </div>
+                  </div>
                 )}
-                <p className="text-xs text-gray-500 mb-1">
-                  👨‍🍳 <span className="italic">{recipe.email?.split('@')[0]}'s Recipe</span>
-                </p>
-                <h4 className="text-md font-semibold text-orange-600 mb-2 truncate">{recipe.title}</h4>
-
-                <div className="text-sm mb-2">
-                  <strong className="text-gray-700">Ingredients:</strong>
-                  <p className="text-gray-600 text-xs mt-1">{recipe.ingredients}</p>
-                </div>
-
-                <div className="text-sm mb-3">
-                  <strong className="text-gray-700">Instructions:</strong>
-                  <p className="text-gray-600 text-xs mt-1">{recipe.instructions}</p>
-                </div>
-
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <span className="bg-orange-100 text-orange-600 px-2 py-1 rounded-full">❤️ {recipe.likes || 0} Likes</span>
-                  <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded-full">💬 {(recipe.comments || []).length} Comments</span>
-                </div>
-
-                <div className="flex gap-4 mt-4 justify-center">
-                  <button
-                    onClick={() => handleLikeRecipe(recipe._id)}
-                    className="text-orange-500 text-sm hover:underline"
-                  >
-                    👍 Like
-                  </button>
-                  <button
-                    onClick={() => handleCommentRecipe(recipe._id, "Looks delicious!")}
-                    className="text-blue-500 text-sm hover:underline"
-                  >
-                    💬 Comment
-                  </button>
+                
+                <div className="p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="text-lg font-semibold text-orange-700 truncate">{recipe.title}</h4>
+                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                      {recipe.difficulty || 'Easy'}
+                    </span>
+                  </div>
+                  
+                  <p className="text-xs text-gray-500 mb-2">
+                    👨‍🍳 By {recipe.email?.split('@')[0] || 'Anonymous'}
+                  </p>
+                  
+                  <div className="mb-3">
+                    <p className="text-xs font-medium text-gray-700 mb-1">Ingredients:</p>
+                    <p className="text-xs text-gray-600 line-clamp-2">
+                      {formatIngredients(recipe.ingredients)}
+                    </p>
+                  </div>
+                  
+                  <div className="mb-4">
+                    <p className="text-xs font-medium text-gray-700 mb-1">Instructions:</p>
+                    <p className="text-xs text-gray-600 line-clamp-2">
+                      {formatInstructions(recipe.instructions)}
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-center justify-between text-xs">
+                    <button 
+                      onClick={() => handleLikeRecipe(recipe._id)}
+                      className="flex items-center gap-1 text-orange-500 hover:text-orange-600"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                      {recipe.likes || 0} Likes
+                    </button>
+                    
+                    <span className="text-gray-500">
+                      💬 {(recipe.comments || []).length} Comments
+                    </span>
+                    
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         )}
       </section>
-
     </div>
   );
 }
