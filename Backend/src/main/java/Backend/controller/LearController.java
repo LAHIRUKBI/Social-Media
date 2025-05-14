@@ -85,6 +85,20 @@ public class LearController {
             return ResponseEntity.status(500).body(null);
         }
     }
+
+    @GetMapping("/{id}")
+public ResponseEntity<LearModel> getRecipeById(@PathVariable String id) {
+    try {
+        LearModel recipe = learRepository.findById(id).orElse(null);
+        if (recipe == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(recipe);
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        return ResponseEntity.status(500).body(null);
+    }
+}
     
     
 

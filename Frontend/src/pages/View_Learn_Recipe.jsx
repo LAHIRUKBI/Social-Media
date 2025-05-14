@@ -5,19 +5,23 @@ import { useNavigate } from 'react-router-dom';
 export default function View_Learn_Recipe() {
   const [recipes, setRecipes] = useState([]);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchRecipes();
   }, []);
 
-  const fetchRecipes = async () => {
-    try {
-      const response = await axios.get('http://localhost:8080/learn');
-      setRecipes(response.data);
-    } catch (err) {
-      console.error('Error fetching recipes:', err);
-    }
-  };
+const fetchRecipes = async () => {
+  setLoading(true);
+  try {
+    const response = await axios.get('http://localhost:8080/learn');
+    setRecipes(response.data);
+  } catch (err) {
+    console.error('Error fetching recipes:', err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this recipe?')) return;
