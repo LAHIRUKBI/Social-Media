@@ -26,9 +26,12 @@ export default function Learnig_share_recipe() {
     if (window.confirm('Are you sure you want to delete this recipe?')) {
       try {
         await axios.delete(`http://localhost:8080/api/recipes/${id}`);
-        fetchRecipes();
+        // Optimistically update the UI by filtering out the deleted recipe
+        setRecipes(prevRecipes => prevRecipes.filter(recipe => recipe.id !== id));
       } catch (error) {
         console.error('Error deleting recipe:', error);
+        // If there's an error, refetch the recipes to ensure consistency
+        fetchRecipes();
       }
     }
   };
@@ -121,7 +124,7 @@ export default function Learnig_share_recipe() {
                           </svg>
                         </button>
                         <button
-                          onClick={() => handleDelete(recipe._id)}
+                          onClick={() => handleDelete(recipe.id)}
                           className="bg-white/90 hover:bg-white text-red-500 p-2 rounded-full shadow-sm transition-colors hover:rotate-6"
                           title="Delete"
                         >
