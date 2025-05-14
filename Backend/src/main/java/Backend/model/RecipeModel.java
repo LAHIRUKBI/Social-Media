@@ -2,35 +2,76 @@ package Backend.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import java.util.List;
-import java.util.Map;
 
-@Document(collection = "recipes")
+@Document(collection = "recipes") // collection name in MongoDB
 public class RecipeModel {
+
     @Id
     private String id;
+
     private String title;
+    private String ingredients;
+    private String instructions;
+    private String imageUrl;
     private String email;
-    private List<Map<String, String>> ingredients;
-    private List<Map<String, String>> instructions;
-    private String imagePath;
+
+    public RecipeModel() {
+    }
+
+    public RecipeModel(String title, String ingredients, String instructions, String imageUrl, String email) {
+        this.title = title;
+        this.ingredients = ingredients;
+        this.instructions = instructions;
+        this.imageUrl = imageUrl;
+        this.email = email;
+    }
 
     // Getters and Setters
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public String getId() {
+        return id;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-    public List<Map<String, String>> getIngredients() { return ingredients; }
-    public void setIngredients(List<Map<String, String>> ingredients) { this.ingredients = ingredients; }
+    public String getTitle() {
+        return title;
+    }
 
-    public List<Map<String, String>> getInstructions() { return instructions; }
-    public void setInstructions(List<Map<String, String>> instructions) { this.instructions = instructions; }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    public String getImagePath() { return imagePath; }
-    public void setImagePath(String imagePath) { this.imagePath = imagePath; }
+    public String getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(String ingredients) {
+        this.ingredients = ingredients;
+    }
+
+    public String getInstructions() {
+        return instructions;
+    }
+
+    public void setInstructions(String instructions) {
+        this.instructions = instructions;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
