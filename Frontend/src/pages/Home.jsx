@@ -159,42 +159,48 @@ export default function Home() {
         {allRecipes.length === 0 ? (
           <p className="text-lg text-center text-gray-600">No recipes available yet.</p>
         ) : (
-          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {allRecipes.map((recipe) => (
-              <div key={recipe._id} className="bg-white rounded-lg shadow-lg p-6 transition transform hover:scale-105">
+              <div key={recipe._id} className="bg-white rounded-xl shadow-md p-4 border border-gray-200 hover:shadow-lg transition-transform hover:scale-105">
                 {recipe.imageUrl && (
                   <img
                     src={`http://localhost:8080${recipe.imageUrl}`}
                     alt={recipe.title}
-                    className="rounded-md mb-4 h-48 w-full object-cover"
+                    className="rounded-md mb-3 h-40 w-full object-cover"
                   />
                 )}
-                 <p className="text-sm text-gray-500 mb-1">
-    👨‍🍳 <span className="italic">{recipe.email?.split('@')[0]}'s Recipe</span>
-  </p>
-                <h4 className="text-lg font-semibold text-orange-500 mb-3">{recipe.title}</h4>
-                <h5 className="text-md font-medium text-gray-700 mb-2">Ingredients:</h5>
-                <p className="text-gray-600 mb-3">{recipe.ingredients}</p>
+                <p className="text-xs text-gray-500 mb-1">
+                  👨‍🍳 <span className="italic">{recipe.email?.split('@')[0]}'s Recipe</span>
+                </p>
+                <h4 className="text-md font-semibold text-orange-600 mb-2 truncate">{recipe.title}</h4>
 
-                <h5 className="text-md font-medium text-gray-700 mb-2">Instructions:</h5>
-                <p className="text-gray-600 mb-4">{recipe.instructions}</p>
+                <div className="text-sm mb-2">
+                  <strong className="text-gray-700">Ingredients:</strong>
+                  <p className="text-gray-600 text-xs mt-1">{recipe.ingredients}</p>
+                </div>
+
+                <div className="text-sm mb-3">
+                  <strong className="text-gray-700">Instructions:</strong>
+                  <p className="text-gray-600 text-xs mt-1">{recipe.instructions}</p>
+                </div>
 
                 <div className="flex items-center justify-between text-xs text-gray-500">
-                  <span>❤️ {recipe.likes || 0} Likes • 💬 {(recipe.comments || []).length} Comments</span>
+                  <span className="bg-orange-100 text-orange-600 px-2 py-1 rounded-full">❤️ {recipe.likes || 0} Likes</span>
+                  <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded-full">💬 {(recipe.comments || []).length} Comments</span>
                 </div>
 
                 <div className="flex gap-4 mt-4 justify-center">
                   <button
                     onClick={() => handleLikeRecipe(recipe._id)}
-                    className="text-orange-500 hover:underline"
+                    className="text-orange-500 text-sm hover:underline"
                   >
-                    Like
+                    👍 Like
                   </button>
                   <button
                     onClick={() => handleCommentRecipe(recipe._id, "Looks delicious!")}
-                    className="text-blue-500 hover:underline"
+                    className="text-blue-500 text-sm hover:underline"
                   >
-                    Comment
+                    💬 Comment
                   </button>
                 </div>
               </div>
