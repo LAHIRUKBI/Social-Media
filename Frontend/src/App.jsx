@@ -24,6 +24,7 @@ import Update_share_recipe from './pages/Update_share_recipe';
 
 export default function App() {
   return (
+    
     <BrowserRouter>
     <Navigation />
       <Routes>
@@ -50,5 +51,6 @@ export default function App() {
       </Routes>
       <Footer />
     </BrowserRouter>
+    
   )
 }

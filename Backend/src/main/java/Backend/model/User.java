@@ -11,6 +11,7 @@ public class User {
     private String password;
     private String profileImage;
     private String coverImage;
+    private String authProvider; // "google" or "email"
 
     // Constructors
     public User() {}
@@ -18,10 +19,12 @@ public class User {
     public User(String email, String password) {
         this.email = email;
         this.password = password;
+        this.authProvider = "email";
     }
 
     // Getters and Setters
     public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
@@ -32,11 +35,9 @@ public class User {
     public String getProfileImage() { return profileImage; }
     public void setProfileImage(String profileImage) { this.profileImage = profileImage; }
 
-    public String getCoverImage() {
-        return coverImage;
-    }
-    
-    public void setCoverImage(String coverImage) {
-        this.coverImage = coverImage;
-    }
+    public String getCoverImage() { return coverImage; }
+    public void setCoverImage(String coverImage) { this.coverImage = coverImage; }
+
+    public String getAuthProvider() { return authProvider; }
+    public void setAuthProvider(String authProvider) { this.authProvider = authProvider; }
 }
