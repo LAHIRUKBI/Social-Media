@@ -11,7 +11,8 @@ public class User {
     private String password;
     private String profileImage;
     private String coverImage;
-    private String authProvider; // "google" or "email"
+    private String authProvider;
+    private String name;
 
     // Constructors
     public User() {}
@@ -40,4 +41,9 @@ public class User {
 
     public String getAuthProvider() { return authProvider; }
     public void setAuthProvider(String authProvider) { this.authProvider = authProvider; }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getName() { return name; }
 }

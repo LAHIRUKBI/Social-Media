@@ -51,9 +51,20 @@ const handleGoogleSuccess = (response) => {
   }
 };
 
-  const handleGoogleError = (error) => {
-    setMessage(error);
-  };
+const handleGoogleError = (error) => {
+    console.error("Google auth error:", error);
+    
+    let errorMessage = "Google authentication failed";
+    if (typeof error === 'string') {
+        errorMessage = error;
+    } else if (error?.message) {
+        errorMessage = error.message;
+    } else if (error?.response?.data?.error) {
+        errorMessage = error.response.data.error;
+    }
+    
+    setMessage(errorMessage);
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80')] bg-cover bg-center relative overflow-hidden">
