@@ -28,12 +28,22 @@ public class GoogleAuthController {
     @Value("${google.client.id}")
     private String googleClientId;
 
-  @PostMapping("/login")
+@PostMapping("/login")
 public ResponseEntity<?> googleLogin(@RequestBody GoogleAuthRequest request) {
     try {
-        System.out.println("Starting Google authentication...");
-        
-        // Verify the token first
+        // Detailed logging
+        System.out.println("Received Google auth request");
+        System.out.println("Token: " + request.getIdToken());
+        System.out.println("Using Client ID: " + googleClientId);
+
+        // Verify token exists
+        if (request.getIdToken() == null || request.getIdToken().isEmpty()) {
+            return ResponseEntity.badRequest().body(
+                Map.of("success", false, "error", "Missing Google token")
+            );
+        }
+
+        // Initialize verifier
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
             new NetHttpTransport(), 
             new GsonFactory()
@@ -41,49 +51,66 @@ public ResponseEntity<?> googleLogin(@RequestBody GoogleAuthRequest request) {
             .setAudience(Collections.singletonList(googleClientId))
             .build();
 
+        // Verify token
         GoogleIdToken idToken = verifier.verify(request.getIdToken());
         if (idToken == null) {
-            System.out.println("Token verification failed");
-            return ResponseEntity.badRequest().body("Invalid Google ID token.");
+            return ResponseEntity.badRequest().body(
+                Map.of("success", false, "error", "Invalid Google token")
+            );
         }
 
-        // Get user info from token payload
+        // Extract payload
         GoogleIdToken.Payload payload = idToken.getPayload();
         String email = payload.getEmail();
         String name = (String) payload.get("name");
         String pictureUrl = (String) payload.get("picture");
 
-        // Check if user exists
+        // Verify required fields
+        if (email == null || email.isEmpty()) {
+            return ResponseEntity.badRequest().body(
+                Map.of("success", false, "error", "Email not provided in Google token")
+            );
+        }
+
+        // Check/create user
         User user = userRepository.findByEmail(email);
         if (user == null) {
-            // Create new user
             user = new User();
             user.setEmail(email);
-            user.setName(name);
-            user.setPassword("google_auth"); // Dummy password for Google users
+            user.setName(name != null ? name : "Google User");
+            user.setPassword("google_auth");
             user.setProfileImage(pictureUrl);
             user.setAuthProvider("google");
             user = userRepository.save(user);
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "Registration successful with Google! Please login.");
-            response.put("user", user);
-            return ResponseEntity.ok(response);
         } else if (!"google".equals(user.getAuthProvider())) {
-            return ResponseEntity.badRequest()
-                .body("This email is already registered. Please login with your password.");
+            return ResponseEntity.badRequest().body(
+                Map.of("success", false, "error", "Email already registered with password")
+            );
         }
 
-        // For existing Google users
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Login successful with Google!");
-        response.put("user", user);
-        return ResponseEntity.ok(response);
+        // Successful response
+        return ResponseEntity.ok(Map.of(
+            "success", true,
+            "message", "Authentication successful",
+            "user", Map.of(
+                "email", user.getEmail(),
+                "name", user.getName(),
+                "profileImage", user.getProfileImage()
+            )
+        ));
 
-    } catch (Exception e) {
-        System.err.println("Error during Google authentication:");
+    } catch (GeneralSecurityException | IOException e) {
+        System.err.println("Google auth verification failed:");
         e.printStackTrace();
-        return ResponseEntity.internalServerError().body("Error during Google authentication: " + e.getMessage());
+        return ResponseEntity.status(500).body(
+            Map.of("success", false, "error", "Token verification failed")
+        );
+    } catch (Exception e) {
+        System.err.println("Unexpected error during Google auth:");
+        e.printStackTrace();
+        return ResponseEntity.internalServerError().body(
+            Map.of("success", false, "error", "Internal server error")
+        );
     }
 }
 

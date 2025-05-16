@@ -28,27 +28,53 @@ export default function Sign() {
 
 
 const handleGoogleSuccess = (response) => {
-  console.log("Google auth response:", response);
-  const message = response.data?.message || response.data;
+  console.log("Google auth success:", response);
+  
+  // Handle both direct response and nested data cases
+  const responseData = response.data || response;
+  const message = responseData.message || 
+                 (responseData.user ? "Google authentication successful" : "");
+  
   setMessage(message);
   
-  if (message && message.includes("successful")) {
+  if (message && (message.includes("successful") || message.includes("Login"))) {
     // Store user data if needed
-    if (response.data?.user) {
-      localStorage.setItem("userEmail", response.data.user.email);
-      localStorage.setItem("userName", response.data.user.name);
-      localStorage.setItem("userProfileImage", response.data.user.profileImage);
+    const userData = responseData.user || {
+      email: responseData.email,
+      name: responseData.name,
+      profileImage: responseData.picture
+    };
+    
+    if (userData) {
+      localStorage.setItem("userEmail", userData.email);
+      localStorage.setItem("userName", userData.name);
+      if (userData.profileImage) {
+        localStorage.setItem("userProfileImage", userData.profileImage);
+      }
     }
     
-    // Always navigate to login page after successful Google registration
+    // Navigate to login page after successful Google registration
     setTimeout(() => navigate('/login'), 1000);
+  } else {
+    setMessage("Authentication successful but unexpected response format");
   }
 };
 
 
-  const handleGoogleError = (error) => {
-    setMessage(error);
-  };
+const handleGoogleError = (error) => {
+    console.error("Google auth error:", error);
+    
+    let errorMessage = "Google authentication failed";
+    if (typeof error === 'string') {
+        errorMessage = error;
+    } else if (error?.message) {
+        errorMessage = error.message;
+    } else if (error?.response?.data?.error) {
+        errorMessage = error.response.data.error;
+    }
+    
+    setMessage(errorMessage);
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80')] bg-cover bg-center relative overflow-hidden">
