@@ -21,10 +21,11 @@ import View_Learn_Recipe from './pages/View_Learn_Recipe';
 import Update_Learn_Recipe from './pages/Update_Learn_Recipe';
 import Shorts from './pages/Shorts';
 import Update_share_recipe from './pages/Update_share_recipe';
+import GoogleAuthProvider from './Components/GoogleAuthProvider';
 
 export default function App() {
   return (
-    
+    <GoogleAuthProvider>
     <BrowserRouter>
     <Navigation />
       <Routes>
@@ -51,6 +52,6 @@ export default function App() {
       </Routes>
       <Footer />
     </BrowserRouter>
-    
+    </GoogleAuthProvider>
   )
 }
