@@ -35,12 +35,21 @@ export default function Login() {
   };
 
 
-   const handleGoogleSuccess = (msg) => {
-    setMessage(msg);
-    if (msg.includes("successful")) {
-      setTimeout(() => navigate('/'), 1000);
+const handleGoogleSuccess = (response) => {
+  console.log("Google auth success:", response);
+  const message = response.data?.message || response.data;
+  setMessage(message);
+  
+  if (message.includes("successful")) {
+    // Store user data if needed
+    if (response.data?.user) {
+      localStorage.setItem("userEmail", response.data.user.email);
+      localStorage.setItem("userName", response.data.user.name);
+      localStorage.setItem("userProfileImage", response.data.user.profileImage);
     }
-  };
+    setTimeout(() => navigate('/'), 1000);
+  }
+};
 
   const handleGoogleError = (error) => {
     setMessage(error);
