@@ -27,25 +27,33 @@ public class UserController {
     private static final String UPLOAD_DIR = "G:/PAFPROJECT/Backend/uploads/";
 
     @PostMapping("/register")
-    public String registerUser(@RequestBody User user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
-            return "Email already exists!";
-        }
-        userRepository.save(user);
-        return "User registered successfully!";
-    }
-
-    @PostMapping("/login")
-    public String loginUser(@RequestBody User user) {
+public String registerUser(@RequestBody User user) {
+    if (userRepository.existsByEmail(user.getEmail())) {
         User existingUser = userRepository.findByEmail(user.getEmail());
-        if (existingUser == null) {
-            return "User not found!";
+        if ("google".equals(existingUser.getAuthProvider())) {
+            return "This email is already registered with Google. Please login with Google.";
         }
-        if (!existingUser.getPassword().equals(user.getPassword())) {
-            return "Invalid password!";
-        }
-        return "Login successful!";
+        return "Email already exists!";
     }
+    user.setAuthProvider("email");
+    userRepository.save(user);
+    return "User registered successfully!";
+}
+
+@PostMapping("/login")
+public String loginUser(@RequestBody User user) {
+    User existingUser = userRepository.findByEmail(user.getEmail());
+    if (existingUser == null) {
+        return "User not found!";
+    }
+    if ("google".equals(existingUser.getAuthProvider())) {
+        return "This email is registered with Google. Please login with Google.";
+    }
+    if (!existingUser.getPassword().equals(user.getPassword())) {
+        return "Invalid password!";
+    }
+    return "Login successful!";
+}
 
     @GetMapping("/{email}")
     public User getUserByEmail(@PathVariable String email) {

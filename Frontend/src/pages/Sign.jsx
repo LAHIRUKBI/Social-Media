@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import GoogleButton from '../Components/GoogleButton';
 
 export default function Sign() {
   const [email, setEmail] = useState('');
@@ -23,6 +24,18 @@ export default function Sign() {
       setMessage("Registration failed. Please try again.");
       console.error(err);
     }
+  };
+
+
+  const handleGoogleSuccess = (msg) => {
+    setMessage(msg);
+    if (msg.includes("successfully")) {
+      setTimeout(() => navigate('/login'), 1000);
+    }
+  };
+
+  const handleGoogleError = (error) => {
+    setMessage(error);
   };
 
   return (
@@ -70,6 +83,21 @@ export default function Sign() {
             <span>🍳</span>
           </button>
         </form>
+
+
+        <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-white/30"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 bg-white/10 text-white/80">Or continue with</span>
+        </div>
+      </div>
+
+      <GoogleButton 
+        onSuccess={handleGoogleSuccess} 
+        onError={handleGoogleError} 
+      />
 
         <div className="mt-6 text-center">
           <p className="text-white/80 text-sm">

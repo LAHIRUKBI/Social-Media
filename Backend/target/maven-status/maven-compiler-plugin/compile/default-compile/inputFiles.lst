@@ -1,5 +1,6 @@
 G:\PAFPROJECT\Backend\src\main\java\Backend\BackendApplication.java
 G:\PAFPROJECT\Backend\src\main\java\Backend\config\WebConfig.java
+G:\PAFPROJECT\Backend\src\main\java\Backend\controller\GoogleAuthController.java
 G:\PAFPROJECT\Backend\src\main\java\Backend\controller\LearController.java
 G:\PAFPROJECT\Backend\src\main\java\Backend\controller\PostController.java
 G:\PAFPROJECT\Backend\src\main\java\Backend\controller\RecipeController.java
