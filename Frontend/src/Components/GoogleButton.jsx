@@ -7,9 +7,9 @@ export default function GoogleButton({ onSuccess, onError }) {
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
         try {
-            console.log("1. Google token received:", tokenResponse);
+            console.log("Google token received:", tokenResponse);
             
-            // Step 1: Get user info from Google
+            // First get user info from Google
             const userInfo = await axios.get(
                 'https://www.googleapis.com/oauth2/v3/userinfo',
                 { 
@@ -18,9 +18,9 @@ export default function GoogleButton({ onSuccess, onError }) {
                     } 
                 }
             );
-            console.log("2. Google user info:", userInfo.data);
+            console.log("Google user info:", userInfo.data);
             
-            // Step 2: Send to backend
+            // Then send to backend
             const backendResponse = await axios.post(
                 "http://localhost:8080/api/auth/google/login", 
                 {
@@ -33,16 +33,16 @@ export default function GoogleButton({ onSuccess, onError }) {
                     headers: { 'Content-Type': 'application/json' }
                 }
             );
-            console.log("3. Backend response:", backendResponse.data);
             
+            console.log("Backend response:", backendResponse.data);
             onSuccess(backendResponse);
         } catch (error) {
-            console.error("Full error details:", {
+            console.error("Google login error:", {
                 message: error.message,
-                response: error.response,
+                response: error.response?.data,
                 stack: error.stack
             });
-            onError(error.response?.data || "Google login failed. Please try again.");
+            onError(error.response?.data?.message || "Google login failed. Please try again.");
         }
     },
     onError: (error) => {

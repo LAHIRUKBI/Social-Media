@@ -28,20 +28,24 @@ export default function Sign() {
 
 
 const handleGoogleSuccess = (response) => {
-  console.log("Google auth success:", response);
+  console.log("Google auth response:", response);
   const message = response.data?.message || response.data;
   setMessage(message);
   
-  if (message.includes("successful")) {
+  if (message && message.includes("successful")) {
     // Store user data if needed
     if (response.data?.user) {
       localStorage.setItem("userEmail", response.data.user.email);
       localStorage.setItem("userName", response.data.user.name);
       localStorage.setItem("userProfileImage", response.data.user.profileImage);
     }
-    setTimeout(() => navigate('/'), 1000);
+    
+    // Always navigate to login page after successful Google registration
+    setTimeout(() => navigate('/login'), 1000);
   }
 };
+
+
   const handleGoogleError = (error) => {
     setMessage(error);
   };
