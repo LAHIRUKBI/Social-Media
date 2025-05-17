@@ -5,34 +5,61 @@ import axios from 'axios';
 
 export default function GoogleButton({ onSuccess, onError }) {
     const handleGoogleLogin = useGoogleLogin({
-        flow: 'auth-code',
-        onSuccess: async (codeResponse) => {
+        onSuccess: async (tokenResponse) => {
             try {
-                // Exchange code for tokens with your backend
-                const tokenResponse = await axios.post(
-                    "http://localhost:8080/api/auth/google/login",
-                    { code: codeResponse.code },
+                console.log("Google token received:", tokenResponse);
+                
+                // First get user info from Google
+                const userInfo = await axios.get(
+                    'https://www.googleapis.com/oauth2/v3/userinfo',
                     {
                         headers: {
-                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${tokenResponse.access_token}`
                         }
                     }
                 );
 
-                if (tokenResponse.data?.success) {
-                    onSuccess(tokenResponse.data);
+                console.log("Google user info:", userInfo.data);
+
+                // Then send to your backend
+                const backendResponse = await axios.post(
+                    "http://localhost:8080/api/auth/google/login",
+                    {
+                        accessToken: tokenResponse.access_token,
+                        email: userInfo.data.email,
+                        name: userInfo.data.name,
+                        picture: userInfo.data.picture
+                    },
+                    {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                console.log("Backend response:", backendResponse.data);
+                
+                if (backendResponse.data?.success) {
+                    onSuccess({
+                        success: true,
+                        user: backendResponse.data.user
+                    });
                 } else {
-                    onError(tokenResponse.data?.error || "Authentication failed");
+                    onError(backendResponse.data?.error || "Authentication failed");
                 }
             } catch (error) {
+                console.error("Full error:", error);
                 let errorMessage = "Google login failed";
                 if (error.response) {
+                    console.error("Error response:", error.response.data);
                     errorMessage = error.response.data?.error || 
                                  error.response.data?.message || 
                                  error.response.statusText;
                 } else if (error.request) {
+                    console.error("No response:", error.request);
                     errorMessage = "No response from server";
                 } else {
+                    console.error("Request error:", error.message);
                     errorMessage = error.message;
                 }
                 onError(errorMessage);
