@@ -27,6 +27,10 @@ public class RecipeController {
 
 
 
+
+
+
+
 @PostMapping("/add")
 public ResponseEntity<String> addRecipe(
         @RequestParam("title") String title,
@@ -59,6 +63,13 @@ public ResponseEntity<String> addRecipe(
 }
 
 
+
+
+
+
+
+
+
 @GetMapping("/user")
 public ResponseEntity<?> getRecipesByUser(@RequestParam String email) {
     try {
@@ -69,6 +80,11 @@ public ResponseEntity<?> getRecipesByUser(@RequestParam String email) {
 }
 
 
+
+
+
+
+
 @GetMapping("/all")
 public ResponseEntity<?> getAllRecipes() {
     try {
@@ -77,6 +93,11 @@ public ResponseEntity<?> getAllRecipes() {
         return ResponseEntity.status(500).body("Error fetching all recipes!");
     }
 }
+
+
+
+
+
 
 
 
@@ -120,6 +141,11 @@ public ResponseEntity<String> updateRecipe(
         return ResponseEntity.status(500).body("Update failed: " + e.getMessage());
     }
 }
+
+
+
+
+
 
 
 @DeleteMapping("/{id}")
