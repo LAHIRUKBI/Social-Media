@@ -9,12 +9,20 @@ export default function Home() {
 
   const [posts, setPosts] = useState([]);
   const [allRecipes, setAllRecipes] = useState([]);
+  const [commentInput, setCommentInput] = useState({});
+  const [comments, setComments] = useState({});
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editCommentText, setEditCommentText] = useState('');
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const res = await axios.get("http://localhost:8080/api/posts/all");
-        setPosts(res.data.reverse()); // show newest first
+        const fetchedPosts = res.data.reverse(); // show newest first
+        setPosts(fetchedPosts);
+        
+        // Fetch comments for each post
+        fetchedPosts.forEach(post => fetchCommentsForPost(post.id));
       } catch (error) {
         console.error("Error fetching posts:", error);
       }
@@ -32,6 +40,18 @@ export default function Home() {
     fetchPosts();
     fetchAllRecipes();
   }, [email]);
+  
+  const fetchCommentsForPost = async (postId) => {
+    try {
+      const res = await axios.get(`http://localhost:8080/api/comments/post/${postId}`);
+      setComments(prev => ({
+        ...prev,
+        [postId]: res.data
+      }));
+    } catch (error) {
+      console.error(`Error fetching comments for post ${postId}:`, error);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.clear();
@@ -53,12 +73,105 @@ export default function Home() {
     }
   };
 
-  const handleCommentPost = (postId, comment) => {
-    setPosts(prevPosts =>
-      prevPosts.map(post =>
-        post.id === postId ? { ...post, comments: [...post.comments, comment] } : post
-      )
-    );
+  const handleCommentInputChange = (postId, value) => {
+    setCommentInput(prev => ({
+      ...prev,
+      [postId]: value
+    }));
+  };
+
+  const handleCommentPost = async (postId) => {
+    if (!commentInput[postId] || commentInput[postId].trim() === '') return;
+    
+    try {
+      const newComment = {
+        postId: postId,
+        userEmail: email || 'Anonymous', // Ensure email is never null
+        content: commentInput[postId].trim()
+      };
+      
+      const response = await axios.post('http://localhost:8080/api/comments/create', newComment);
+      
+      if (response && response.data) {
+        // Update comments state safely
+        setComments(prev => ({
+          ...prev,
+          [postId]: [...(prev[postId] || []), response.data]
+        }));
+        
+        // Clear input
+        setCommentInput(prev => ({
+          ...prev,
+          [postId]: ''
+        }));
+      }
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      alert('Failed to add comment. Please try again.');
+    }
+  };
+  
+  // New functions for editing comments
+  const startEditing = (comment) => {
+    setEditingCommentId(comment.id);
+    setEditCommentText(comment.content);
+  };
+  
+  const cancelEditing = () => {
+    setEditingCommentId(null);
+    setEditCommentText('');
+  };
+  
+  const handleEditChange = (e) => {
+    setEditCommentText(e.target.value);
+  };
+  
+  const saveEditedComment = async (commentId, postId) => {
+    if (!editCommentText.trim()) return;
+    
+    try {
+      // Send content as a JSON object
+      const response = await axios.put(
+        `http://localhost:8080/api/comments/${commentId}?userEmail=${email}`,
+        { content: editCommentText }
+      );
+      
+      if (response && response.data) {
+        // Update comments state with edited comment
+        setComments(prev => ({
+          ...prev,
+          [postId]: prev[postId].map(comment => 
+            comment.id === commentId ? response.data : comment
+          )
+        }));
+        
+        // Exit editing mode
+        setEditingCommentId(null);
+        setEditCommentText('');
+      }
+    } catch (error) {
+      console.error('Error updating comment:', error);
+      alert('Failed to update comment. ' + (error.response?.data || 'Please try again.'));
+    }
+  };
+  
+  // New function for deleting comments
+  const deleteComment = async (commentId, postId) => {
+    if (!window.confirm('Are you sure you want to delete this comment?')) return;
+    
+    try {
+      await axios.delete(`http://localhost:8080/api/comments/${commentId}?userEmail=${email}`);
+      
+      // Remove deleted comment from state
+      setComments(prev => ({
+        ...prev,
+        [postId]: prev[postId].filter(comment => comment.id !== commentId)
+      }));
+      
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      alert('Failed to delete comment. ' + (error.response?.data || 'Please try again.'));
+    }
   };
 
   const handleLikeRecipe = (recipeId) => {
@@ -130,7 +243,7 @@ export default function Home() {
                 <p className="text-sm text-gray-700 mb-4">{post.description}</p>
 
                 <div className="flex items-center justify-between text-sm text-gray-500 border-t pt-3">
-                  <span>❤️ {post.likes} Likes • 💬 {post.comments.length} Comments</span>
+                  <span>❤️ {post.likes} Likes • 💬 {comments[post.id]?.length || 0} Comments</span>
                 </div>
 
                 <div className="flex gap-4 mt-4 justify-center">
@@ -140,12 +253,82 @@ export default function Home() {
                   >
                     👍 Like
                   </button>
-                  <button
-                    onClick={() => handleCommentPost(post.id, 'Nice recipe!')}
-                    className="text-blue-500 hover:underline font-medium"
-                  >
-                    💬 Comment
-                  </button>
+                </div>
+                
+                {/* Comments section */}
+                <div className="mt-4">
+                  <div className="flex mb-3">
+                    <input
+                      type="text"
+                      value={commentInput[post.id] || ''}
+                      onChange={(e) => handleCommentInputChange(post.id, e.target.value)}
+                      placeholder="Add a comment..."
+                      className="flex-grow border rounded-l-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-300"
+                    />
+                    <button
+                      onClick={() => handleCommentPost(post.id)}
+                      className="bg-orange-500 text-white px-4 py-2 rounded-r-lg hover:bg-orange-600"
+                    >
+                      Post
+                    </button>
+                  </div>
+                  
+                  {/* Display comments */}
+                  {comments[post.id] && comments[post.id].length > 0 && (
+                    <div className="mt-3 max-h-40 overflow-y-auto">
+                      {comments[post.id].map((comment) => (
+                        <div key={comment.id} className="bg-gray-50 p-2 mb-2 rounded-lg">
+                          <div className="flex justify-between">
+                            <span className="font-medium text-sm">{comment.userEmail ? comment.userEmail.split('@')[0] : 'Anonymous'}</span>
+                            {/* Only show edit/delete for user's own comments */}
+                            {comment.userEmail === email && (
+                              <div className="flex space-x-2">
+                                <button 
+                                  onClick={() => startEditing(comment)} 
+                                  className="text-xs text-gray-500 hover:text-blue-500"
+                                >
+                                  Edit
+                                </button>
+                                <button 
+                                  onClick={() => deleteComment(comment.id, post.id)} 
+                                  className="text-xs text-gray-500 hover:text-red-500"
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                          {editingCommentId === comment.id ? (
+                            <div className="mt-1">
+                              <textarea
+                                value={editCommentText}
+                                onChange={handleEditChange}
+                                className="w-full p-1 border rounded text-sm"
+                                rows="2"
+                              />
+                              <div className="flex justify-end space-x-2 mt-1">
+                                <button
+                                  onClick={cancelEditing}
+                                  className="text-xs py-1 px-2 bg-gray-200 rounded hover:bg-gray-300"
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  onClick={() => saveEditedComment(comment.id, post.id)}
+                                  className="text-xs py-1 px-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                >
+                                  Save
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <p className="text-sm mt-1">{comment.content}</p>
+                          )}
+                        </div>
+                      ))}
+
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

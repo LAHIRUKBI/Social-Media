@@ -1,4 +1,6 @@
 Backend\model\RecipeModel.class
+Backend\controller\CommentController.class
+Backend\model\Comment.class
 Backend\controller\PostController.class
 Backend\model\Post$PostBuilder.class
 Backend\repository\UserRepository.class
@@ -8,8 +10,11 @@ Backend\repository\RecipeRepository.class
 Backend\BackendApplication.class
 Backend\controller\UserController.class
 Backend\repository\LearRepository.class
+Backend\repository\CommentRepository.class
 Backend\model\LearModel.class
 Backend\model\User.class
 Backend\repository\PostRepository.class
+Backend\BackendApplication$1.class
 Backend\config\WebConfig.class
 Backend\controller\LearController.class
+Backend\model\Comment$CommentBuilder.class
