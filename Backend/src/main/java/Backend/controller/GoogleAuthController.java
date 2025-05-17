@@ -24,6 +24,9 @@ public class GoogleAuthController {
     @Value("${google.client.id}")
     private String googleClientId;
 
+
+
+
     @PostMapping("/login")
     public ResponseEntity<?> googleLogin(@RequestBody Map<String, String> request) {
         try {
@@ -64,13 +67,13 @@ public class GoogleAuthController {
             }
 
             Map<String, Object> response = Map.of(
-                "success", true,
-                "message", "Authentication successful",
-                "user", Map.of(
-                    "email", user.getEmail(),
-                    "name", user.getName(),
-                    "profileImage", user.getProfileImage()
-                )
+            "success", true,
+            "message", "Authentication successful",
+            "user", Map.of(
+                "email", user.getEmail(),
+                "name", user.getName(),
+                "profileImage", user.getProfileImage()
+            )
             );
             
             logger.info("Google authentication successful for user: {}", email);
@@ -78,9 +81,9 @@ public class GoogleAuthController {
 
         } catch (Exception e) {
             logger.error("Error during Google authentication", e);
-            return ResponseEntity.internalServerError().body(Map.of(
-                "success", false,
-                "error", "Internal server error: " + (e.getMessage() != null ? e.getMessage() : "Unknown error")
+        return ResponseEntity.internalServerError().body(Map.of(
+            "success", false,
+            "error", "Internal server error: " + (e.getMessage() != null ? e.getMessage() : "Unknown error")
             ));
         }
     }
