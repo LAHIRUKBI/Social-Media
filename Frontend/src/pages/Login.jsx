@@ -37,17 +37,20 @@ export default function Login() {
 
 const handleGoogleSuccess = (response) => {
   console.log("Google auth success:", response);
-  const message = response.data?.message || response.data;
-  setMessage(message);
   
-  if (message.includes("successful")) {
+  if (response.success) {
     // Store user data if needed
-    if (response.data?.user) {
-      localStorage.setItem("userEmail", response.data.user.email);
-      localStorage.setItem("userName", response.data.user.name);
-      localStorage.setItem("userProfileImage", response.data.user.profileImage);
+    if (response.user) {
+      localStorage.setItem("userEmail", response.user.email);
+      localStorage.setItem("userName", response.user.name);
+      if (response.user.profileImage) {
+        localStorage.setItem("userProfileImage", response.user.profileImage);
+      }
     }
+    setMessage("Login successful!");
     setTimeout(() => navigate('/'), 1000);
+  } else {
+    setMessage(response.error || "Authentication failed");
   }
 };
 
