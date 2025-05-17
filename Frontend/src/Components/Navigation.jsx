@@ -30,7 +30,7 @@ export default function Navigation() {
 
         {/* Logo */}
         <div className="text-3xl font-black tracking-wide text-red-600 flex items-center gap-1">
-          Cook<span className="text-gray-800">Book</span>
+          Food<span className="text-gray-800">Gram</span>
         </div>
 
         {/* Navigation Links */}
