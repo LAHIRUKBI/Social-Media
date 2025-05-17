@@ -256,77 +256,102 @@ export default function Home() {
                 </div>
                 
                 {/* Comments section */}
-                <div className="mt-4">
-                  <div className="flex mb-3">
+                <div className="mt-6">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                    Comments ({comments[post.id]?.length || 0})
+                  </h4>
+                  
+                  <div className="flex mb-3 bg-white rounded-full shadow-sm overflow-hidden border border-gray-100">
                     <input
                       type="text"
                       value={commentInput[post.id] || ''}
                       onChange={(e) => handleCommentInputChange(post.id, e.target.value)}
-                      placeholder="Add a comment..."
-                      className="flex-grow border rounded-l-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-300"
+                      placeholder="Write a comment..."
+                      className="flex-grow px-4 py-2 focus:outline-none text-sm"
                     />
                     <button
                       onClick={() => handleCommentPost(post.id)}
-                      className="bg-orange-500 text-white px-4 py-2 rounded-r-lg hover:bg-orange-600"
+                      className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-4 py-2 font-medium transition-colors duration-300 hover:from-orange-500 hover:to-orange-600 flex items-center"
                     >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                      </svg>
                       Post
                     </button>
                   </div>
                   
                   {/* Display comments */}
                   {comments[post.id] && comments[post.id].length > 0 && (
-                    <div className="mt-3 max-h-40 overflow-y-auto">
+                    <div className="mt-3 max-h-60 overflow-y-auto pr-1 space-y-3">
                       {comments[post.id].map((comment) => (
-                        <div key={comment.id} className="bg-gray-50 p-2 mb-2 rounded-lg">
-                          <div className="flex justify-between">
-                            <span className="font-medium text-sm">{comment.userEmail ? comment.userEmail.split('@')[0] : 'Anonymous'}</span>
+                        <div key={comment.id} className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 transition-all duration-200 hover:shadow-md">
+                          <div className="flex justify-between items-center mb-2">
+                            <div className="flex items-center">
+                              <div className="w-7 h-7 rounded-full bg-gradient-to-r from-blue-400 to-indigo-500 flex items-center justify-center text-white text-xs font-bold mr-2">
+                                {comment.userEmail ? comment.userEmail.split('@')[0].charAt(0).toUpperCase() : 'A'}
+                              </div>
+                              <span className="font-medium text-gray-800">
+                                {comment.userEmail ? comment.userEmail.split('@')[0] : 'Anonymous'}
+                                <span className="text-xs text-gray-500 ml-2">{new Date(comment.createdAt).toLocaleDateString()}</span>
+                              </span>
+                            </div>
+                            
                             {/* Only show edit/delete for user's own comments */}
                             {comment.userEmail === email && (
-                              <div className="flex space-x-2">
+                              <div className="flex space-x-1">
                                 <button 
                                   onClick={() => startEditing(comment)} 
-                                  className="text-xs text-gray-500 hover:text-blue-500"
+                                  className="text-xs text-gray-400 hover:text-blue-500 p-1 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                                  title="Edit comment"
                                 >
-                                  Edit
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                  </svg>
                                 </button>
                                 <button 
                                   onClick={() => deleteComment(comment.id, post.id)} 
-                                  className="text-xs text-gray-500 hover:text-red-500"
+                                  className="text-xs text-gray-400 hover:text-red-500 p-1 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                                  title="Delete comment"
                                 >
-                                  Delete
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                  </svg>
                                 </button>
                               </div>
                             )}
                           </div>
+                          
                           {editingCommentId === comment.id ? (
                             <div className="mt-1">
                               <textarea
                                 value={editCommentText}
                                 onChange={handleEditChange}
-                                className="w-full p-1 border rounded text-sm"
+                                className="w-full p-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent"
                                 rows="2"
                               />
-                              <div className="flex justify-end space-x-2 mt-1">
+                              <div className="flex justify-end space-x-2 mt-2">
                                 <button
                                   onClick={cancelEditing}
-                                  className="text-xs py-1 px-2 bg-gray-200 rounded hover:bg-gray-300"
+                                  className="text-xs py-1.5 px-3 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors duration-200"
                                 >
                                   Cancel
                                 </button>
                                 <button
                                   onClick={() => saveEditedComment(comment.id, post.id)}
-                                  className="text-xs py-1 px-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                  className="text-xs py-1.5 px-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200"
                                 >
                                   Save
                                 </button>
                               </div>
                             </div>
                           ) : (
-                            <p className="text-sm mt-1">{comment.content}</p>
+                            <p className="text-gray-700 text-sm">{comment.content}</p>
                           )}
                         </div>
                       ))}
-
                     </div>
                   )}
                 </div>
