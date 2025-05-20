@@ -114,7 +114,7 @@ export default function Home() {
 
       {/* Navbar */}
       <nav className="flex justify-between items-center bg-gradient-to-r from-orange-400 to-orange-500 text-white p-6 shadow-lg">
-        <h1 className="text-3xl font-extrabold tracking-wide">🍳 CookBook</h1>
+        <h1 className="text-3xl font-extrabold tracking-wide">FoodGRAM</h1>
         <div className="flex items-center gap-6">
           <span className="text-lg font-medium">Hi, {name}!</span>
           <button
